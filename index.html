@@ -515,7 +515,7 @@
         <div id="movies" class="tab-content active">
             <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
                 <input type="text" class="search-box" placeholder="Search movies..." onkeyup="searchTable('moviesTable', this.value)" style="flex: 1; min-width: 300px;">
-                <button onclick="openAddMovieModal()" style="padding: 14px 28px; background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.95em; transition: all 0.2s; white-space: nowrap;">
+                <button onclick="openAddMovieModal('movies')" style="padding: 14px 28px; background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.95em; transition: all 0.2s; white-space: nowrap;">
                     + Add Movie
                 </button>
             </div>
@@ -539,7 +539,12 @@
             </div>
         </div>
         <div id="documentaries" class="tab-content">
-            <input type="text" class="search-box" placeholder="Search documentaries..." onkeyup="searchTable('docsTable', this.value)">
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                <input type="text" class="search-box" placeholder="Search documentaries..." onkeyup="searchTable('docsTable', this.value)" style="flex: 1; min-width: 300px;">
+                <button onclick="openAddMovieModal('docs')" style="padding: 14px 28px; background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.95em; transition: all 0.2s; white-space: nowrap;">
+                    + Add Documentary
+                </button>
+            </div>
             <div style="overflow-x: auto;">
                 <table id="docsTable">
                     <thead>
@@ -560,7 +565,12 @@
         </div>
 
         <div id="criterion" class="tab-content">
-            <input type="text" class="search-box" placeholder="Search Criterion collection..." onkeyup="searchTable('criterionTable', this.value)">
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                <input type="text" class="search-box" placeholder="Search Criterion collection..." onkeyup="searchTable('criterionTable', this.value)" style="flex: 1; min-width: 300px;">
+                <button onclick="openAddMovieModal('criterion')" style="padding: 14px 28px; background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.95em; transition: all 0.2s; white-space: nowrap;">
+                    + Add to Criterion
+                </button>
+            </div>
             <div style="overflow-x: auto;">
                 <table id="criterionTable">
                     <thead>
@@ -573,7 +583,7 @@
                             <th>Director</th>
                             <th>Language</th>
                             <th>Oscar Best Picture</th>
-                            <th class="watched-column">Watched</th>
+                            <th>Watched</th>
                         </tr>
                     </thead>
                     <tbody id="criterionBody"></tbody>
@@ -702,9 +712,24 @@
                             <input type="text" id="releaseYear" placeholder="Auto-fetched from TMDB" readonly style="width: 100%; padding: 12px; background: #1c1c1e; border: 1px solid #3a3a3c; border-radius: 8px; color: #98989d; font-size: 0.95em;">
                         </div>
 
-                        <div>
+                        <div id="oscarYearField">
                             <label style="display: block; margin-bottom: 6px; color: #d1d1d6; font-weight: 500;">Oscar Year</label>
                             <input type="text" id="oscarYear" placeholder="e.g., 2023" style="width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 8px; color: #f5f5f7; font-size: 0.95em;">
+                        </div>
+                    </div>
+
+                    <!-- Criterion-specific fields -->
+                    <div id="criterionFields" style="display: none;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 6px; color: #d1d1d6; font-weight: 500;">Director</label>
+                                <input type="text" id="director" style="width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 8px; color: #f5f5f7; font-size: 0.95em;">
+                            </div>
+
+                            <div>
+                                <label style="display: block; margin-bottom: 6px; color: #d1d1d6; font-weight: 500;">Language</label>
+                                <input type="text" id="language" placeholder="e.g., French, Japanese" style="width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 8px; color: #f5f5f7; font-size: 0.95em;">
+                            </div>
                         </div>
                     </div>
 
@@ -1626,19 +1651,74 @@
             return custom ? JSON.parse(custom) : [];
         }
 
+        function getCustomDocs() {
+            const custom = localStorage.getItem('customDocs');
+            return custom ? JSON.parse(custom) : [];
+        }
+
+        function getCustomCriterion() {
+            const custom = localStorage.getItem('customCriterion');
+            return custom ? JSON.parse(custom) : [];
+        }
+
         function saveCustomMovies(movies) {
             localStorage.setItem('customMovies', JSON.stringify(movies));
+        }
+
+        function saveCustomDocs(docs) {
+            localStorage.setItem('customDocs', JSON.stringify(docs));
+        }
+
+        function saveCustomCriterion(criterion) {
+            localStorage.setItem('customCriterion', JSON.stringify(criterion));
         }
 
         function getAllMovies() {
             return [...moviesData, ...getCustomMovies()];
         }
 
+        function getAllDocs() {
+            return [...docsData, ...getCustomDocs()];
+        }
+
+        function getAllCriterion() {
+            return [...criterionData, ...getCustomCriterion()];
+        }
+
+        // Track which collection we're adding to
+        let currentCollection = 'movies';
+
         // Add Movie Modal Functions
-        function openAddMovieModal() {
+        function openAddMovieModal(collection = 'movies') {
+            currentCollection = collection;
             document.getElementById('addMovieModal').style.display = 'flex';
             document.getElementById('addMovieForm').reset();
             document.getElementById('releaseYear').value = '';
+
+            // Update modal title
+            const modalTitle = document.querySelector('#addMovieModal .modal-header h2');
+            if (collection === 'docs') {
+                modalTitle.textContent = 'Add New Documentary';
+            } else if (collection === 'criterion') {
+                modalTitle.textContent = 'Add to Criterion Collection';
+            } else {
+                modalTitle.textContent = 'Add New Movie';
+            }
+
+            // Show/hide collection-specific fields
+            const criterionFields = document.getElementById('criterionFields');
+            const oscarField = document.getElementById('oscarYearField');
+
+            if (collection === 'criterion') {
+                criterionFields.style.display = 'block';
+                oscarField.style.display = 'block';
+            } else if (collection === 'docs') {
+                criterionFields.style.display = 'none';
+                oscarField.style.display = 'none';
+            } else {
+                criterionFields.style.display = 'none';
+                oscarField.style.display = 'block';
+            }
         }
 
         function closeAddMovieModal() {
@@ -1703,39 +1783,81 @@
             const releaseYear = document.getElementById('releaseYear').value.trim();
             const oscarYear = document.getElementById('oscarYear').value.trim();
 
-            // Create new movie entry
-            const newMovie = [
-                movieName,
-                boxedSet,
-                format,
-                includesBluray,
-                digital,
-                platform,
-                releaseYear,
-                oscarYear
-            ];
+            let newEntry;
+            let successMessage;
 
-            // Save to localStorage
-            const customMovies = getCustomMovies();
-            customMovies.push(newMovie);
-            saveCustomMovies(customMovies);
+            // Build entry based on collection type
+            if (currentCollection === 'docs') {
+                // Documentaries: [name, boxed set, format, includes blu-ray, digital, platform]
+                newEntry = [
+                    movieName,
+                    boxedSet,
+                    format,
+                    includesBluray,
+                    digital,
+                    platform
+                ];
 
-            // Refresh the table
-            const allMovies = getAllMovies();
-            populateTable(allMovies, 'moviesBody', [0, 1, 2, 4, 5, 6, 7], 'movies');
+                const customDocs = getCustomDocs();
+                customDocs.push(newEntry);
+                saveCustomDocs(customDocs);
+
+                populateTable(getAllDocs(), 'docsBody', [0, 1, 2, 3, 4, 5], 'docs');
+                successMessage = `✅ "${movieName}" has been added to your documentaries!`;
+
+            } else if (currentCollection === 'criterion') {
+                // Criterion: [name, boxed set, format, (skip), year, director, language, oscar]
+                const director = document.getElementById('director').value.trim();
+                const language = document.getElementById('language').value.trim();
+
+                newEntry = [
+                    movieName,
+                    boxedSet,
+                    format,
+                    "",  // Skip the blu-ray field for criterion
+                    releaseYear,
+                    director,
+                    language,
+                    oscarYear
+                ];
+
+                const customCriterion = getCustomCriterion();
+                customCriterion.push(newEntry);
+                saveCustomCriterion(customCriterion);
+
+                populateTable(getAllCriterion(), 'criterionBody', [0, 1, 2, 4, 5, 6, 7], 'criterion');
+                successMessage = `✅ "${movieName}" has been added to your Criterion Collection!`;
+
+            } else {
+                // Main Movies: [name, boxed set, format, includes blu-ray, digital, platform, year, oscar]
+                newEntry = [
+                    movieName,
+                    boxedSet,
+                    format,
+                    includesBluray,
+                    digital,
+                    platform,
+                    releaseYear,
+                    oscarYear
+                ];
+
+                const customMovies = getCustomMovies();
+                customMovies.push(newEntry);
+                saveCustomMovies(customMovies);
+
+                populateTable(getAllMovies(), 'moviesBody', [0, 1, 2, 4, 5, 6, 7], 'movies');
+                successMessage = `✅ "${movieName}" has been added to your collection!`;
+            }
+
             calculateStats();
-
-            // Close modal
             closeAddMovieModal();
-
-            // Show success message
-            alert(`✅ "${movieName}" has been added to your collection!`);
+            alert(successMessage);
         }
 
         // Initialize tables with all movies (including custom ones)
         populateTable(getAllMovies(), 'moviesBody', [0, 1, 2, 4, 5, 6, 7], 'movies');
-        populateTable(docsData, 'docsBody', [0, 1, 2, 3, 4, 5], 'docs');
-        populateTable(criterionData, 'criterionBody', [0, 1, 2, 4, 5, 6, 7], 'criterion');
+        populateTable(getAllDocs(), 'docsBody', [0, 1, 2, 3, 4, 5], 'docs');
+        populateTable(getAllCriterion(), 'criterionBody', [0, 1, 2, 4, 5, 6, 7], 'criterion');
         calculateStats();
         updateWatchedStats();
     </script>
