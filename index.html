@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punitha Movie Collection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+            background: #000000;
+            min-height: 100vh;
+            padding: 20px;
+            color: #f5f5f7;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #1c1c1e;
+            border-radius: 18px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+            overflow: hidden;
+            border: 1px solid #2c2c2e;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1d1d1f 0%, #000000 100%);
+            color: #f5f5f7;
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 1px solid #2c2c2e;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.7;
+            font-weight: 400;
+        }
+
+        .tabs {
+            display: flex;
+            background: #2c2c2e;
+            border-bottom: 1px solid #3a3a3c;
+            overflow-x: auto;
+            padding: 0 20px;
+        }
+
+        .tab {
+            padding: 18px 28px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 0.95em;
+            font-weight: 500;
+            color: #98989d;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #f5f5f7;
+        }
+
+        .tab.active {
+            background: transparent;
+            color: #ffffff;
+            border-bottom: 2px solid #0a84ff;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            background: #1c1c1e;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+            padding: 14px 22px;
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid #3a3a3c;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.2s;
+            background: #2c2c2e;
+            color: #f5f5f7;
+        }
+
+        .search-box::placeholder {
+            color: #98989d;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #0a84ff;
+            background: #1c1c1e;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #2c2c2e;
+            color: #f5f5f7;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #3a3a3c;
+            transition: all 0.2s ease;
+        }
+
+        .stat-card:hover {
+            background: #3a3a3c;
+            transform: translateY(-2px);
+        }
+
+        .stat-number {
+            font-size: 2.8em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #0a84ff;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            opacity: 0.7;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #2c2c2e;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #3a3a3c;
+        }
+
+        thead {
+            background: #1d1d1f;
+            color: #f5f5f7;
+            border-bottom: 2px solid #3a3a3c;
+        }
+
+        th {
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #98989d;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #3a3a3c;
+            color: #f5f5f7;
+        }
+
+        tbody tr {
+            transition: background 0.15s ease;
+            background: #2c2c2e;
+        }
+
+        tbody tr:hover {
+            background: #3a3a3c;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-yes {
+            background: rgba(52, 199, 89, 0.2);
+            color: #32d74b;
+            border: 1px solid rgba(52, 199, 89, 0.3);
+        }
+
+        .badge-no {
+            background: rgba(255, 69, 58, 0.2);
+            color: #ff453a;
+            border: 1px solid rgba(255, 69, 58, 0.3);
+        }
+
+        .badge-4k {
+            background: rgba(255, 159, 10, 0.2);
+            color: #ff9f0a;
+            border: 1px solid rgba(255, 159, 10, 0.3);
+        }
+
+        .badge-bluray {
+            background: rgba(10, 132, 255, 0.2);
+            color: #0a84ff;
+            border: 1px solid rgba(10, 132, 255, 0.3);
+        }
+
+        .badge-oscar {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.25) 0%, rgba(255, 165, 0, 0.25) 100%);
+            color: #ffd700;
+            font-weight: bold;
+            padding: 6px 14px;
+            border: 1px solid rgba(255, 215, 0, 0.4);
+        }
+
+        .oscar-winner {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.03) 100%) !important;
+            border-left: 3px solid #ffd700 !important;
+            font-weight: 500;
+        }
+
+        .oscar-winner:hover {
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%) !important;
+        }
+
+        .watched-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #0a84ff;
+        }
+
+        .movie-watched {
+            opacity: 0.5;
+            text-decoration: line-through;
+            background: #1c1c1e !important;
+        }
+
+        .movie-watched:hover {
+            opacity: 0.6;
+            background: #2c2c2e !important;
+        }
+
+        .badge-watched {
+            background: rgba(52, 199, 89, 0.2);
+            color: #32d74b;
+            font-size: 0.75em;
+            margin-left: 5px;
+            border: 1px solid rgba(52, 199, 89, 0.3);
+        }
+
+        .watched-column {
+            text-align: center;
+            width: 80px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #98989d;
+            font-size: 1.2em;
+        }
+
+        .boxed-set-header {
+            font-weight: 600;
+            border-left: 4px solid #0a84ff;
+            box-shadow: none;
+        }
+
+        .boxed-set-header td {
+            padding: 16px 20px !important;
+            font-size: 1em;
+            border-bottom: 1px solid #3a3a3c !important;
+            background: #1d1d1f !important;
+        }
+
+        .boxed-set-item {
+            transition: all 0.2s;
+        }
+
+        .boxed-set-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .boxed-set-spacer {
+            background: transparent !important;
+        }
+
+        .boxed-set-spacer td {
+            border: none !important;
+        }
+
+        .movie-link {
+            color: #f5f5f7;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .movie-link:hover {
+            color: #0a84ff;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            animation: fadeIn 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background-color: #1c1c1e;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+            animation: slideIn 0.3s;
+            border: 1px solid #3a3a3c;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: #1d1d1f;
+            color: #f5f5f7;
+            padding: 24px;
+            border-radius: 16px 16px 0 0;
+            position: relative;
+            border-bottom: 1px solid #3a3a3c;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            padding-right: 40px;
+            font-weight: 700;
+            font-size: 1.8em;
+        }
+
+        .close {
+            color: #98989d;
+            position: absolute;
+            right: 24px;
+            top: 24px;
+            font-size: 32px;
+            font-weight: 300;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close:hover {
+            color: #f5f5f7;
+        }
+
+        .modal-body {
+            padding: 24px;
+            background: #1c1c1e;
+        }
+
+        .movie-poster {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .movie-info {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+        }
+
+        .movie-details {
+            flex: 1;
+        }
+
+        .movie-meta {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            background: #2c2c2e;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            color: #f5f5f7;
+            border: 1px solid #3a3a3c;
+        }
+
+        .movie-overview {
+            line-height: 1.7;
+            color: #d1d1d6;
+            margin-top: 15px;
+        }
+
+        .movie-overview h3 {
+            color: #f5f5f7;
+            font-weight: 600;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #0a84ff;
+        }
+
+        .spinner {
+            border: 3px solid #3a3a3c;
+            border-top: 3px solid #0a84ff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .movie-info {
+                grid-template-columns: 1fr;
+            }
+
+            .movie-poster {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .tab {
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+
+            table {
+                font-size: 0.85em;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📺 Punitha's Movie Collection</h1>
+            <p class="subtitle">Powered by Apple TV</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('movies')">Main Movie Collection</button>
+            <button class="tab" onclick="showTab('criterion')">Criterion Collection</button>
+            <button class="tab" onclick="showTab('documentaries')">Documentaries</button>
+            <button class="tab" onclick="showTab('stats')">Statistics</button>
+        </div>
+
+        <div id="movies" class="tab-content active">
+            <input type="text" class="search-box" placeholder="Search movies..." onkeyup="searchTable('moviesTable', this.value)">
+            <div style="overflow-x: auto;">
+                <table id="moviesTable">
+                    <thead>
+                        <tr>
+                            <th>Movie Name</th>
+                            <th>Boxed Set</th>
+                            <th>Format</th>
+                            <th>Genre</th>
+                            <th>Digital</th>
+                            <th>Platform</th>
+                            <th>Release Year</th>
+                            <th>Oscar Best Picture</th>
+                            <th class="watched-column">Watched</th>
+                        </tr>
+                    </thead>
+                    <tbody id="moviesBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="documentaries" class="tab-content">
+            <input type="text" class="search-box" placeholder="Search documentaries..." onkeyup="searchTable('docsTable', this.value)">
+            <div style="overflow-x: auto;">
+                <table id="docsTable">
+                    <thead>
+                        <tr>
+                            <th>Movie Name</th>
+                            <th>Boxed Set</th>
+                            <th>Format</th>
+                            <th>Genre</th>
+                            <th>Includes Blu-ray</th>
+                            <th>Digital</th>
+                            <th>Platform</th>
+                            <th class="watched-column">Watched</th>
+                        </tr>
+                    </thead>
+                    <tbody id="docsBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="criterion" class="tab-content">
+            <input type="text" class="search-box" placeholder="Search Criterion collection..." onkeyup="searchTable('criterionTable', this.value)">
+            <div style="overflow-x: auto;">
+                <table id="criterionTable">
+                    <thead>
+                        <tr>
+                            <th>Movie Name</th>
+                            <th>Boxed Set</th>
+                            <th>Format</th>
+                            <th>Genre</th>
+                            <th>Year</th>
+                            <th>Director</th>
+                            <th>Language</th>
+                            <th>Oscar Best Picture</th>
+                            <th class="watched-column">Watched</th>
+                        </tr>
+                    </thead>
+                    <tbody id="criterionBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="stats" class="tab-content">
+            <h2 style="margin-bottom: 20px; color: #f5f5f7; font-weight: 700;">Collection Statistics</h2>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalMovies">0</div>
+                    <div class="stat-label">Total Movies</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total4k">0</div>
+                    <div class="stat-label">4K UHD</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalBluray">0</div>
+                    <div class="stat-label">Blu-ray</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalDigital">0</div>
+                    <div class="stat-label">Digital Copies</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalDocs">0</div>
+                    <div class="stat-label">Documentaries</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCriterion">0</div>
+                    <div class="stat-label">Criterion Collection</div>
+                </div>
+                <div class="stat-card" style="background: rgba(255, 215, 0, 0.15); border: 1px solid rgba(255, 215, 0, 0.3);">
+                    <div class="stat-number" style="color: #ffd700;" id="totalOscars">0</div>
+                    <div class="stat-label">🏆 Oscar Best Picture Winners</div>
+                </div>
+                <div class="stat-card" style="background: rgba(52, 199, 89, 0.15); border: 1px solid rgba(52, 199, 89, 0.3);">
+                    <div class="stat-number" style="color: #32d74b;" id="totalWatched">0</div>
+                    <div class="stat-label">✓ Watched Movies</div>
+                </div>
+            </div>
+            <div style="margin-top: 30px; padding: 20px; background: rgba(255, 215, 0, 0.08); border-left: 3px solid #ffd700; border-radius: 10px; border: 1px solid rgba(255, 215, 0, 0.2);">
+                <p style="margin: 0; color: #d1d1d6; font-size: 0.95em;">
+                    <strong style="color: #ffd700;">🏆 Oscar Best Picture Winners:</strong> Movies highlighted with a golden background and trophy badge won the Academy Award for Best Picture.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Movie Details Modal -->
+    <div id="movieModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Movie Title</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading movie details...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const moviesData = [
+            ["Harry Potter and the Sorcerer's Stone", "Harry Potter Collection", "4k", "yes", "no", "", "2001", ""],
+            ["Harry Potter and the Chamber of Secrets", "Harry Potter Collection", "4k", "yes", "no", "", "2002", ""],
+            ["Harry Potter and the Prisoner of Azkaban", "Harry Potter Collection", "4k", "yes", "no", "", "2004", ""],
+            ["Harry Potter and the Goblet of Fire", "Harry Potter Collection", "4k", "yes", "no", "", "2005", ""],
+            ["Harry Potter and the Order of the Phoenix", "Harry Potter Collection", "4k", "yes", "no", "", "2007", ""],
+            ["Harry Potter and the Half-Blood Prince", "Harry Potter Collection", "4k", "yes", "no", "", "2009", ""],
+            ["Harry Potter and the Deathly Hallows – Part 1", "Harry Potter Collection", "4k", "yes", "no", "", "2010", ""],
+            ["Harry Potter and the Deathly Hallows – Part 2", "Harry Potter Collection", "4k", "yes", "no", "", "2011", ""],
+            ["Back to the Future", "Back to the Future Trilogy", "4k", "yes", "yes", "AppleTV", "1985", ""],
+            ["Back to the Future Part II", "Back to the Future Trilogy", "4k", "yes", "yes", "AppleTV", "1989", ""],
+            ["Back to the Future Part III", "Back to the Future Trilogy", "4k", "yes", "yes", "AppleTV", "1990", ""],
+            ["The Lord of the Rings: The Fellowship of the Ring", "The Lord of the Rings Trilogy", "4k", "no", "no", "", "2001", ""],
+            ["The Lord of the Rings: The Two Towers", "The Lord of the Rings Trilogy", "4k", "no", "no", "", "2002", ""],
+            ["The Lord of the Rings: The Return of the King", "The Lord of the Rings Trilogy", "4k", "no", "no", "", "2003", "2004"],
+            ["The Bourne Identity", "The Bourne Collection", "4k", "no", "yes", "AppleTV", "2002", ""],
+            ["The Bourne Supremacy", "The Bourne Collection", "4k", "no", "yes", "AppleTV", "2004", ""],
+            ["The Bourne Ultimatum", "The Bourne Collection", "4k", "no", "yes", "AppleTV", "2007", ""],
+            ["The Bourne Legacy", "The Bourne Collection", "4k", "no", "yes", "AppleTV", "2012", ""],
+            ["Jason Bourne", "The Bourne Collection", "4k", "no", "yes", "AppleTV", "2016", ""],
+            ["A Quiet Place", "", "4k", "no", "yes", "AppleTV", "2018", ""],
+            ["A Quiet Place II", "", "4k", "no", "yes", "AppleTV", "2020", ""],
+            ["Venom: Let There Be Carnage", "", "4k", "", "yes", "AppleTV", "2021", ""],
+            ["Venom", "", "4k", "", "yes", "AppleTV", "2018", ""],
+            ["Dunkirk", "Christopher Nolan Collection", "4k", "yes", "no", "", "2017", ""],
+            ["Batman Begins", "Christopher Nolan Collection", "4k", "yes", "no", "", "2005", ""],
+            ["The Dark Knight", "Christopher Nolan Collection", "4k", "yes", "no", "", "2008", ""],
+            ["The Dark Knight Rises", "Christopher Nolan Collection", "4k", "yes", "no", "", "2012", ""],
+            ["Inception", "Christopher Nolan Collection", "4k", "yes", "no", "", "2010", ""],
+            ["Interstellar", "Christopher Nolan Collection", "4k", "yes", "no", "", "2014", ""],
+            ["The Prestige", "Christopher Nolan Collection", "4k", "yes", "no", "", "2006", ""],
+            ["The Godfather", "", "4k", "", "yes", "AppleTV", "1972", "1973"],
+            ["The Godfather Part II", "", "4k", "", "yes", "AppleTV", "1974", "1975"],
+            ["The Godfather Part III", "", "4k", "", "no", "", "1990", ""],
+            ["Jaws", "", "4k", "yes", "yes", "AppleTV", "1975", ""],
+            ["Jaws 2", "", "4k", "", "yes", "AppleTV", "1978", ""],
+            ["The Matrix", "The Matrix Collection", "4k", "yes", "yes", "AppleTV", "1999", ""],
+            ["The Matrix Reloaded", "The Matrix Collection", "4k", "yes", "yes", "AppleTV", "2003", ""],
+            ["The Matrix Revolutions", "The Matrix Collection", "4k", "yes", "yes", "AppleTV", "2003", ""],
+            ["The Matrix Resurrections", "The Matrix Collection", "4k", "yes", "yes", "AppleTV", "2021", ""],
+            ["Rear Window", "The Alfred Hitchcock Classics Collection - Volume 1", "4k", "yes", "yes", "AppleTV", "1954", ""],
+            ["Vertigo", "The Alfred Hitchcock Classics Collection - Volume 1", "4k", "yes", "yes", "AppleTV", "1958", ""],
+            ["Psycho", "The Alfred Hitchcock Classics Collection - Volume 1", "4k", "yes", "yes", "AppleTV", "1960", ""],
+            ["The Birds", "The Alfred Hitchcock Classics Collection - Volume 1", "4k", "yes", "yes", "AppleTV", "1963", ""],
+            ["Rope", "The Alfred Hitchcock Classics Collection - Volume 2", "4k", "yes", "yes", "", "1948", ""],
+            ["The Man Who Knew Too Much", "The Alfred Hitchcock Classics Collection - Volume 2", "4k", "yes", "yes", "", "1956", ""],
+            ["Torn Curtain", "The Alfred Hitchcock Classics Collection - Volume 2", "4k", "yes", "yes", "", "1966", ""],
+            ["Topaz", "The Alfred Hitchcock Classics Collection - Volume 2", "4k", "yes", "yes", "", "1969", ""],
+            ["Frenzy", "The Alfred Hitchcock Classics Collection - Volume 2", "4k", "yes", "yes", "", "1972", ""],
+            ["Saboteur", "The Alfred Hitchcock Classics Collection - Volume 3", "4k", "yes", "yes", "", "1942", ""],
+            ["Shadow of a Doubt", "The Alfred Hitchcock Classics Collection - Volume 3", "4k", "yes", "yes", "", "1943", ""],
+            ["The Trouble with Harry", "The Alfred Hitchcock Classics Collection - Volume 3", "4k", "yes", "yes", "", "1955", ""],
+            ["Marnie", "The Alfred Hitchcock Classics Collection - Volume 3", "4k", "yes", "yes", "", "1964", ""],
+            ["Family Plot", "The Alfred Hitchcock Classics Collection - Volume 3", "4k", "yes", "yes", "", "1976", ""],
+            ["Alien", "", "4k", "yes", "yes", "AppleTV", "1979", ""],
+            ["Alien: Covenant", "", "no", "yes", "yes", "AppleTV", "2017", ""],
+            ["Prometheus", "", "4k", "yes", "yes", "AppleTV", "2012", ""],
+            ["A Fistful of Dollars", "Man with No Name Trilogy", "4k", "", "no", "", "1964", ""],
+            ["For a Few Dollars More", "Man with No Name Trilogy", "4k", "", "no", "", "1965", ""],
+            ["The Good, the Bad and the Ugly", "Man with No Name Trilogy", "4k", "", "no", "", "1966", ""],
+            ["John Wick", "John Wick Collection", "4k", "", "", "", "2014", ""],
+            ["John Wick: Chapter 2", "John Wick Collection", "4k", "", "", "", "2017", ""],
+            ["John Wick: Chapter 3 - Parabellum", "John Wick Collection", "4k", "", "", "", "2019", ""],
+            ["John Wick: Chapter 4", "John Wick Collection", "4k", "", "yes", "AppleTV", "2023", ""],
+            ["Rise of the Planet of the Apes", "Planet of the Apes Trilogy", "4k", "", "yes", "AppleTV", "2011", ""],
+            ["Dawn of the Planet of the Apes", "Planet of the Apes Trilogy", "4k", "", "yes", "AppleTV", "2014", ""],
+            ["War for the Planet of the Apes", "Planet of the Apes Trilogy", "4k", "", "yes", "AppleTV", "2017", ""],
+            ["Blade Runner 2049", "", "4k", "", "no", "", "2017", ""],
+            ["Blade Runner: The Final Cut", "", "4k", "", "no", "", "1982", ""],
+            ["Spider-Man: Into the Spider-Verse", "Spider-Verse", "4k", "yes", "yes", "", "2018", ""],
+            ["Spider-Man: Across the Spider-Verse", "Spider-Verse", "4k", "yes", "yes", "", "2023", ""],
+            ["Mission: Impossible", "Mission: Impossible Collection", "4k", "yes", "yes", "AppleTV", "1996", ""],
+            ["Mission: Impossible II", "Mission: Impossible Collection", "4k", "yes", "yes", "AppleTV", "2000", ""],
+            ["Mission: Impossible III", "Mission: Impossible Collection", "4k", "yes", "yes", "AppleTV", "2006", ""],
+            ["Mission: Impossible - Ghost Protocol", "Mission: Impossible Collection", "4k", "yes", "yes", "AppleTV", "2011", ""],
+            ["Mission: Impossible - Rogue Nation", "Mission: Impossible Collection", "4k", "yes", "yes", "AppleTV", "2015", ""],
+            ["Mission: Impossible - Fallout", "Mission: Impossible Collection", "4k", "yes", "yes", "AppleTV", "2018", ""],
+            ["Dune", "", "4k", "yes", "yes", "AppleTV", "2021", ""],
+            ["Dune: Part Two", "", "4k", "no", "yes", "", "2024", ""],
+            ["My Neighbor Totoro", "The Collected Works of Hayao Miyazaki", "no", "yes", "", "", "1988", ""],
+            ["Porco Rosso", "The Collected Works of Hayao Miyazaki", "no", "yes", "", "", "1992", ""],
+            ["Spirited Away", "The Collected Works of Hayao Miyazaki", "no", "yes", "", "", "2001", "2002"],
+            ["Lupin the Third: The Castle of Cagliostro", "The Collected Works of Hayao Miyazaki", "no", "yes", "", "", "1979", ""],
+            ["Princess Mononoke", "The Collected Works of Hayao Miyazaki", "no", "yes", "", "", "1997", ""],
+            ["Nausicaä of the Valley of the Wind", "The Collected Works of Hayao Miyazaki", "no", "yes", "", "", "1984", ""],
+            ["The Wind Rises", "The Collected Works of Hayao Miyazaki", "no", "yes", "", "", "2013", ""],
+            ["Kiki's Delivery Service", "The Collected Works of Hayao Miyazaki", "no", "yes", "", "", "1989", ""],
+            ["Howl's Moving Castle", "The Collected Works of Hayao Miyazaki", "no", "yes", "", "", "2004", ""],
+            ["Ponyo", "The Collected Works of Hayao Miyazaki", "no", "yes", "", "", "2008", ""],
+            ["Apollo 13", "", "4k", "yes", "yes", "AppleTV", "1995", ""],
+            ["Alita: Battle Angel", "", "4k", "yes", "yes", "AppleTV", "2019", ""],
+            ["E.T. the Extra-Terrestrial", "", "4k", "yes", "yes", "AppleTV", "1982", ""],
+            ["Heat", "", "4k", "yes", "yes", "AppleTV", "1995", ""],
+            ["The Goonies", "", "4k", "", "no", "", "1985", ""],
+            ["Gremlins", "", "4k", "yes", "yes", "", "1984", ""],
+            ["Get Out", "", "4k", "yes", "yes", "", "2017", ""],
+            ["The Conjuring: The Devil Made Me Do It", "", "4k", "", "no", "", "2021", ""],
+            ["The Shining", "", "4k", "", "no", "", "1980", ""],
+            ["The Lost Boys", "", "4k", "yes", "yes", "", "1987", ""],
+            ["Poltergeist", "", "4k", "yes", "yes", "", "1982", ""],
+            ["The Cabin in the Woods", "", "4k", "yes", "yes", "", "2012", ""],
+            ["Moonfall", "", "4k", "yes", "yes", "", "2022", ""],
+            ["Spies in Disguise", "", "4k", "yes", "yes", "AppleTV", "2019", ""],
+            ["Catwoman: Hunted", "", "4k", "yes", "yes", "AppleTV", "2022", ""],
+            ["The Greatest Showman", "", "4k", "yes", "yes", "AppleTV", "2017", ""],
+            ["The Call of the Wild", "", "4k", "yes", "yes", "", "2020", ""],
+            ["Bohemian Rhapsody", "", "4k", "yes", "yes", "AppleTV", "2018", ""],
+            ["Braveheart", "", "4k", "yes", "yes", "AppleTV", "1995", "1996"],
+            ["Gladiator", "", "4k", "yes", "yes", "AppleTV", "2000", "2001"],
+            ["The Northman", "", "4k", "", "yes", "AppleTV", "2022", ""],
+            ["Kubo and the Two Strings", "", "4k", "yes", "no", "", "2016", ""],
+            ["The Wizard of Oz", "", "4k", "", "", "", "1939", "1940"],
+            ["A Clockwork Orange", "", "4k", "", "yes", "AppleTV", "1971", ""],
+            ["Godzilla", "", "4k", "", "", "", "2014", ""],
+            ["Mad Max", "", "4k", "", "", "", "1979", ""],
+            ["Memento", "", "no", "yes", "", "", "2000", ""],
+            ["Ghost in the Shell", "", "4k", "yes", "yes", "AppleTV", "1995", ""],
+            ["Lawrence of Arabia", "", "4k", "yes", "yes", "", "1962", "1963"],
+            ["King Kong", "", "4k", "yes", "yes", "AppleTV", "2005", ""],
+            ["Inglourious Basterds", "", "4k", "", "", "", "2009", ""],
+            ["The Magnificent Seven", "", "4k", "yes", "", "", "1960", ""],
+            ["Terminator 2: Judgment Day", "", "4k", "yes", "yes", "AppleTV", "1991", ""],
+            ["Django Unchained", "", "4k", "", "", "", "2012", ""],
+            ["Godzilla vs. Kong", "", "4k", "", "no", "", "2021", ""],
+            ["Schindler's List", "", "4k", "yes", "yes", "AppleTV", "1993", "1994"],
+            ["Van Helsing", "", "4k", "yes", "yes", "AppleTV", "2004", ""],
+            ["Hugo", "", "", "", "", "AppleTV", "2011", "2012"]
+        ];
+
+        const docsData = [
+            ["Journey to the South Pacific", "", "4k", "yes", "yes", ""],
+            ["Green Planet", "", "4k", "yes", "no", ""],
+            ["Perfect Planet", "", "4k", "yes", "no", ""],
+            ["Frozen Planet II", "", "4k", "yes", "", ""],
+            ["Planet Earth II", "", "4k", "yes", "", ""],
+            ["Blue Planet II", "", "4k", "yes", "", ""],
+            ["Dynasties", "", "4k", "yes", "", ""],
+            ["Seven Worlds, One Planet", "", "", "", "", ""]
+        ];
+
+        const criterionData = [
+            ["12 Angry Men", "", "Blu-Ray", "", "1957", "Sidney Lumet", "American"],
+            ["Forty Guns", "", "Blu-Ray", "", "1957", "Samuel Fuller", "American"],
+            ["Anatomy of a Murder", "", "Blu-Ray", "", "1959", "Otto Preminger", "American"],
+            ["Paths of Glory", "", "Blu-Ray", "", "1957", "Stanley Kubrick", "American"],
+            ["Only Angels Have Wings", "", "Blu-Ray", "", "1939", "Howard Hawks", "American"],
+            ["The Shooting/Ride in the Whirlwind", "", "Blu-Ray", "", "1966", "Monte Hellman", "American"],
+            ["Mirror", "", "Blu-Ray", "", "1975", "Andrei Tarkovsky", "Russian"],
+            ["The Big City", "", "Blu-Ray", "", "1963", "Satyajit Ray", "Indian"],
+            ["The Music Room", "", "Blu-Ray", "", "1958", "Satyajit Ray", "Indian"],
+            ["Charulata", "", "Blu-Ray", "", "1964", "Satyajit Ray", "Indian"],
+            ["Devi", "", "Blu-Ray", "", "1960", "Satyajit Ray", "Indian"],
+            ["The Hero", "", "Blu-Ray", "", "1966", "Satyajit Ray", "Indian"],
+            ["The Last Temptation of Christ", "", "Blu-Ray", "", "1988", "Martin Scorsese", "American"],
+            ["The Last Waltz", "", "Blu-Ray", "", "1978", "Martin Scorsese", "American"],
+            ["House", "", "Blu-Ray", "", "1977", "Nobuhiko Obayashi", "Japanese"],
+            ["Y tu mamá también", "", "Blu-Ray", "", "2001", "Alfonso Cuarón", "Spanish"],
+            ["Fantastic Planet", "", "Blu-Ray", "", "1973", "René Laloux", "French"],
+            ["It's a Mad, Mad, Mad, Mad World", "", "Blu-Ray", "", "1963", "Stanley Kramer", "American"],
+            ["Bob Dylan: Don't Look Back", "", "Blu-Ray", "", "1967", "D. A. Pennebaker", "American"],
+            ["Dazed and Confused", "", "Blu-Ray", "", "1993", "Richard Linklater", "American"],
+            ["The Young Girls of Rochefort", "", "Blu-Ray", "", "1967", "Jacques Demy", "French"],
+            ["Heaven's Gate", "", "Blu-Ray", "", "1980", "Michael Cimino", "American"],
+            ["The Rules of the Game", "", "Blu-Ray", "", "1939", "Jean Renoir", "French"],
+            ["Bull Durham", "", "Blu-Ray", "", "1988", "Ron Shelton", "American"],
+            ["After Life", "", "Blu-Ray", "", "1998", "Hirokazu Kore-eda", "Japanese"],
+            ["Tampopo", "", "Blu-Ray", "", "1985", "Juzo Itami", "Japanese"],
+            ["The Last Emperor", "", "Blu-Ray", "", "1987", "Bernardo Bertolucci", "Chinese"],
+            ["Walkabout", "", "Blu-Ray", "", "1971", "Nicolas Roeg", "Australian"],
+            ["The Silence of the Lambs", "", "Blu-Ray", "", "1991", "Jonathan Demme", "American"],
+            ["A Master Builder", "", "Blu-Ray", "", "2014", "Jonathan Demme", "American"],
+            ["Fantastic Mr. Fox", "", "Blu-Ray", "", "2009", "Wes Anderson", "American"],
+            ["The Royal Tenenbaums", "", "Blu-Ray", "", "2001", "Wes Anderson", "American"],
+            ["The Grand Budapest Hotel", "", "Blu-Ray", "", "2014", "Wes Anderson", "American"],
+            ["Rushmore", "", "Blu-Ray", "", "1998", "Wes Anderson", "American"],
+            ["For All Mankind", "", "4k", "yes", "1989", "Al Reinert", "American"],
+            ["WALL-E", "", "4k", "yes", "2008", "Andrew Stanton", "American"],
+            ["The Princess Bride", "", "4k", "yes", "1987", "Rob Reiner", "American"],
+            ["The Cameraman", "", "Blu-Ray", "", "1928", "Edward Sedgwick", ""],
+            ["Master of the House", "", "Blu-Ray + DVD", "", "1925", "Carl Theodor Dreyer", ""],
+            ["Yi Yi", "", "Blu-Ray", "", "2000", "Edward Yang", "Chinese"],
+            ["Marketa Lazarová", "", "Blu-Ray", "", "1967", "František Vláčil", "Czech"],
+            ["Harakiri", "", "Blu-Ray", "", "1963", "Masaki Kobayashi", ""],
+            ["Kwaidan", "", "Blu-Ray", "", "1965", "Masaki Kobayashi", "Japanese"],
+            ["The Human Condition", "", "Blu-Ray", "", "1959", "Masaki Kobayashi", "Japanese"],
+            ["Le Samouraï", "", "4k", "yes", "1967", "Jean-Pierre Melville", "French"],
+            ["A Brief History of Time", "", "Blu-Ray", "", "1991", "Errol Morris", "American"],
+            ["Cure", "", "Blu-Ray", "", "1997", "Kiyoshi Kurosawa", "Japanese"],
+            ["Dragon Inn", "", "Blu-Ray", "", "1967", "King Hu", "Mandarin"],
+            ["A Touch of Zen", "", "Blu-Ray", "", "1971", "King Hu", "Mandarin"],
+            ["Safety Last!", "", "Blu-Ray", "", "1923", "Harold Lloyd", "American"],
+            ["Thief", "", "4k", "yes", "1981", "Michael Mann", "American"],
+            ["Pan's Labyrinth", "", "Blu-Ray", "", "2006", "Guillermo del Toro", "Spanish"],
+            ["Cronos", "", "4k", "yes", "1993", "Guillermo del Toro", "Spanish"],
+            ["The Shape of Water", "", "4k", "yes", "2017", "Guillermo del Toro", "English"],
+            ["Pinocchio", "", "4k", "yes", "2022", "Guillermo del Toro", "Spanish"],
+            ["Godland", "", "Blu-Ray", "", "2022", "Hlynur Pálmason", "Danish"],
+            ["Perfect Days", "", "4k", "yes", "2023", "Wim Wenders", "Japanese"],
+            ["Okja", "", "4k", "yes", "2017", "Bong Joon-ho", "Korean"],
+            ["The Trial", "", "4k", "yes", "1962", "Orson Welles", "French"],
+            ["Gate of Hell", "", "Blu-Ray", "", "1953", "Teinosuke Kinugasa", "Japanese"],
+            ["Mulholland Drive", "", "4k", "yes", "2001", "David Lynch", ""],
+            ["Days of Heaven", "", "4k", "yes", "1978", "Terrence Malick", "American"],
+            ["McCabe & Mrs. Miller", "", "4k", "yes", "1971", "Robert Altman", ""],
+            ["Petite Maman", "", "Blu-Ray", "", "2021", "Céline Sciamma", "French"],
+            ["Portrait of a Lady on Fire", "", "Blu-Ray", "", "2019", "Céline Sciamma", ""],
+            ["The Ballad of Narayama", "", "Blu-Ray", "", "1958", "Keisuke Kinoshita", "Japanese"],
+            ["The Makioka Sisters", "", "Blu-Ray", "", "1983", "Kon Ichikawa", "Japanese"],
+            ["Seven Samurai", "", "Blu-Ray", "", "1954", "Akira Kurosawa", "Japanese"],
+            ["Dreams", "", "4k", "yes", "1990", "Akira Kurosawa", "Japanese"],
+            ["Yojimbo", "Yojimbo/Sanjuro", "Blu-Ray", "", "1961", "Akira Kurosawa", "Japanese"],
+            ["Sanjuro", "Yojimbo/Sanjuro", "Blu-Ray", "", "1962", "Akira Kurosawa", "Japanese"],
+            ["Where Is the Friend's House?", "The Koker Trilogy", "Blu-Ray", "", "1987", "Abbas Kiarostami", ""],
+            ["And Life Goes On", "The Koker Trilogy", "Blu-Ray", "", "1992", "Abbas Kiarostami", ""],
+            ["Through the Olive Trees", "The Koker Trilogy", "Blu-Ray", "", "1994", "Abbas Kiarostami", ""],
+            ["Police Story", "Police Story / Police Story 2", "Blu-Ray", "", "1985", "Jackie Chan", "Chinese"],
+            ["Police Story 2", "Police Story / Police Story 2", "Blu-Ray", "", "1988", "Jackie Chan", "Chinese"],
+            ["Lady Snowblood", "The Complete Lady Snowblood", "Blu-Ray", "", "1973", "Toshiya Fujita", "Japanese"],
+            ["Lady Snowblood: Love Song of Vengeance", "The Complete Lady Snowblood", "Blu-Ray", "", "1974", "Toshiya Fujita", "Japanese"],
+            ["Before Sunrise", "The Before Trilogy", "Blu-Ray", "", "1995", "Richard Linklater", "American"],
+            ["Before Sunset", "The Before Trilogy", "Blu-Ray", "", "2004", "Richard Linklater", "American"],
+            ["Before Midnight", "The Before Trilogy", "Blu-Ray", "", "2013", "Richard Linklater", "American"],
+            ["The Big Boss (Fists of Fury)", "Bruce Lee: His Greatest Hits", "Blu-Ray", "", "1971", "Lo Wei", "Chinese"],
+            ["Fist of Fury (The Chinese Connection)", "Bruce Lee: His Greatest Hits", "Blu-Ray", "", "1972", "Lo Wei", "Chinese"],
+            ["Way of the Dragon (Return of the Dragon)", "Bruce Lee: His Greatest Hits", "Blu-Ray", "", "1972", "Bruce Lee", "Chinese"],
+            ["Enter the Dragon", "Bruce Lee: His Greatest Hits", "Blu-Ray", "", "1973", "Robert Clouse", "Chinese"],
+            ["Game of Death", "Bruce Lee: His Greatest Hits", "Blu-Ray", "", "1978", "Bruce Lee", "Chinese"],
+            ["Once Upon a Time in China", "Once Upon a Time in China: The Complete Films", "Blu-Ray", "", "1991", "Tsui Hark", "Chinese"],
+            ["Once Upon a Time in China II", "Once Upon a Time in China: The Complete Films", "Blu-Ray", "", "1992", "Tsui Hark", "Chinese"],
+            ["Once Upon a Time in China III", "Once Upon a Time in China: The Complete Films", "Blu-Ray", "", "1993", "Tsui Hark", "Chinese"],
+            ["Once Upon a Time in China IV", "Once Upon a Time in China: The Complete Films", "Blu-Ray", "", "1993", "Yuen Bun", "Chinese"],
+            ["Once Upon a Time in China V", "Once Upon a Time in China: The Complete Films", "Blu-Ray", "", "1994", "Tsui Hark", "Chinese"],
+            ["Sword of Vengeance", "Lone Wolf and Cub", "Blu-Ray", "", "1972", "Kenji Misumi", "Japanese"],
+            ["Baby Cart at the River Styx", "Lone Wolf and Cub", "Blu-Ray", "", "1972", "Kenji Misumi", "Japanese"],
+            ["Baby Cart to Hades", "Lone Wolf and Cub", "Blu-Ray", "", "1972", "Kenji Misumi", "Japanese"],
+            ["Baby Cart in Peril", "Lone Wolf and Cub", "Blu-Ray", "", "1972", "Buichi Saito", "Japanese"],
+            ["Baby Cart in the Land of Demons", "Lone Wolf and Cub", "Blu-Ray", "", "1973", "Kenji Misumi", "Japanese"],
+            ["White Heaven in Hell", "Lone Wolf and Cub", "Blu-Ray", "", "1974", "Yoshiyuki Kuroda", "Japanese"],
+            ["Jour de fête", "Complete Jacques Tati", "Blu-Ray", "", "1949", "Jacques Tati", "French"],
+            ["Monsieur Hulot's Holiday", "Complete Jacques Tati", "Blu-Ray", "", "1953", "Jacques Tati", "French"],
+            ["Mon Oncle", "Complete Jacques Tati", "Blu-Ray", "", "1958", "Jacques Tati", "French"],
+            ["Playtime", "Complete Jacques Tati", "Blu-Ray", "", "1967", "Jacques Tati", "French"],
+            ["Trafic", "Complete Jacques Tati", "Blu-Ray", "", "1971", "Jacques Tati", "French"],
+            ["Parade", "Complete Jacques Tati", "Blu-Ray", "", "1974", "Jacques Tati", "French"],
+            ["The Great Dictator", "Charlie Chaplin", "Blu-Ray", "", "1940", "Charlie Chaplin", "American"],
+            ["The Kid", "Charlie Chaplin", "Blu-Ray", "", "1921", "Charlie Chaplin", "American"],
+            ["The Gold Rush", "Charlie Chaplin", "Blu-Ray", "", "1942", "Charlie Chaplin", "American"],
+            ["Limelight", "Charlie Chaplin", "Blu-Ray", "", "1952", "Charlie Chaplin", "American"],
+            ["City Lights", "Charlie Chaplin", "Blu-Ray", "", "1931", "Charlie Chaplin", "American"],
+            ["Modern Times", "Charlie Chaplin", "Blu-Ray", "", "1936", "Charlie Chaplin", "American"],
+            ["Monsieur Verdoux", "Charlie Chaplin", "Blu-Ray", "", "1947", "Charlie Chaplin", "American"],
+            ["The Circus", "Charlie Chaplin", "Blu-Ray", "", "1928", "Charlie Chaplin", "American"],
+            ["The Tale of Zatoichi", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1962", "Kenji Misumi", "Japanese"],
+            ["The Tale of Zatoichi Continues", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1962", "Kazuo Mori", "Japanese"],
+            ["New Tale of Zatoichi", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1963", "Tokuzō Tanaka", "Japanese"],
+            ["Zatoichi the Fugitive", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1963", "Tokuzō Tanaka", "Japanese"],
+            ["Zatoichi on the Road", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1963", "Kimiyoshi Yasuda", "Japanese"],
+            ["Zatoichi and the Chest of Gold", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1964", "Kazuo Ikehiro", "Japanese"],
+            ["Zatoichi's Flashing Sword", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1964", "Kazuo Ikehiro", "Japanese"],
+            ["Fight, Zatoichi, Fight", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1964", "Kenji Misumi", "Japanese"],
+            ["Adventures of Zatoichi", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1964", "Kimiyoshi Yasuda", "Japanese"],
+            ["Zatoichi's Revenge", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1965", "Akira Inoue", "Japanese"],
+            ["Zatoichi and the Doomed Man", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1965", "Kazuo Mori", "Japanese"],
+            ["Zatoichi and the Chess Expert", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1965", "Kenji Misumi", "Japanese"],
+            ["Zatoichi's Vengeance", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1966", "Tokuzō Tanaka", "Japanese"],
+            ["Zatoichi's Pilgrimage", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1966", "Kazuo Ikehiro", "Japanese"],
+            ["Zatoichi's Cane Sword", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1967", "Kimiyoshi Yasuda", "Japanese"],
+            ["Zatoichi the Outlaw", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1967", "Satsuo Yamamoto", "Japanese"],
+            ["Zatoichi Challenged", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1967", "Kenji Misumi", "Japanese"],
+            ["Zatoichi and the Fugitives", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1968", "Kimiyoshi Yasuda", "Japanese"],
+            ["Samaritan Zatoichi", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1968", "Kenji Misumi", "Japanese"],
+            ["Zatoichi and Yojimbo", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1970", "Kihachi Okamoto", "Japanese"],
+            ["Zatoichi: The Festival of Fire", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1970", "Kenji Misumi", "Japanese"],
+            ["Zatoichi Meets the One-Armed Swordsman", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1971", "Kimiyoshi Yasuda", "Japanese"],
+            ["Zatoichi at Large", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1972", "Kazuo Mori", "Japanese"],
+            ["Zatoichi in Desperation", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1972", "Shintaro Katsu", "Japanese"],
+            ["Zatoichi's Conspiracy", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1973", "Kimiyoshi Yasuda", "Japanese"],
+            ["Zatoichi: Darkness Is His Ally", "Zatoichi: The Blind Swordsman", "Blu-Ray", "", "1989", "Shintaro Katsu", "Japanese"],
+            ["Infernal Affairs", "The Infernal Affairs Trilogy", "Blu-Ray", "", "2002", "Andrew Lau & Alan Mak", "Chinese"],
+            ["Infernal Affairs II", "The Infernal Affairs Trilogy", "Blu-Ray", "", "2003", "Andrew Lau & Alan Mak", "Chinese"],
+            ["Infernal Affairs III", "The Infernal Affairs Trilogy", "Blu-Ray", "", "2003", "Andrew Lau & Alan Mak", "Chinese"],
+            ["Shadows", "John Cassavetes: Five Films", "Blu-Ray", "", "1959", "John Cassavetes", "American"],
+            ["Faces", "John Cassavetes: Five Films", "Blu-Ray", "", "1968", "John Cassavetes", "American"],
+            ["A Woman Under the Influence", "John Cassavetes: Five Films", "Blu-Ray", "", "1974", "John Cassavetes", "American"],
+            ["The Killing of a Chinese Bookie", "John Cassavetes: Five Films", "Blu-Ray", "", "1976", "John Cassavetes", "American"],
+            ["Opening Night", "John Cassavetes: Five Films", "Blu-Ray", "", "1977", "John Cassavetes", "American"],
+            ["A Constant Forge", "John Cassavetes: Five Films", "Blu-Ray", "", "2000", "John Cassavetes", "American"],
+            ["Three Colors: Blue", "Three Colors Trilogy", "4k", "", "1993", "Krzysztof Kieślowski", "French"],
+            ["Three Colors: White", "Three Colors Trilogy", "4k", "", "1994", "Krzysztof Kieślowski", "French"],
+            ["Three Colors: Red", "Three Colors Trilogy", "4k", "", "1994", "Krzysztof Kieślowski", "French"],
+            ["The Heroic Trio", "The Heroic Trio / Executioners", "4k", "", "1993", "Johnnie To", "Chinese"],
+            ["Executioners", "The Heroic Trio / Executioners", "4k", "", "1993", "Johnnie To", "Chinese"],
+            ["Pather Panchali", "The Apu Trilogy", "4k", "", "1955", "Satyajit Ray", "Indian"],
+            ["Aparajito", "The Apu Trilogy", "4k", "", "1956", "Satyajit Ray", "Indian"],
+            ["The World of Apu", "The Apu Trilogy", "4k", "", "1959", "Satyajit Ray", "Indian"],
+            ["Smiles of a Summer Night", "Ingmar Bergman's Cinema - Opening Night", "Blu-Ray", "", "1955", "Ingmar Bergman", "Swedish"],
+            ["Crisis", "Ingmar Bergman's Cinema - Opening Night", "Blu-Ray", "", "1946", "Ingmar Bergman", "Swedish"],
+            ["A Ship to India", "Ingmar Bergman's Cinema - Opening Night", "Blu-Ray", "", "1947", "Ingmar Bergman", "Swedish"],
+            ["Wild Strawberries", "Ingmar Bergman's Cinema - Opening Night", "Blu-Ray", "", "1957", "Ingmar Bergman", "Swedish"],
+            ["To Joy", "Ingmar Bergman's Cinema - Opening Night", "Blu-Ray", "", "1950", "Ingmar Bergman", "Swedish"],
+            ["Summer Interlude", "Ingmar Bergman's Cinema - Opening Night", "Blu-Ray", "", "1951", "Ingmar Bergman", "Swedish"],
+            ["Summer with Monika", "Ingmar Bergman's Cinema - Opening Night", "Blu-Ray", "", "1953", "Ingmar Bergman", "Swedish"],
+            ["Dreams", "Ingmar Bergman's Cinema - Opening Night", "Blu-Ray", "", "1955", "Ingmar Bergman", "Swedish"],
+            ["A Lesson in Love", "Ingmar Bergman's Cinema - Opening Night", "Blu-Ray", "", "1954", "Ingmar Bergman", "Swedish"],
+            ["Scenes from a Marriage", "Ingmar Bergman's Cinema - Center Piece One", "Blu-Ray", "", "1973", "Ingmar Bergman", "Swedish"],
+            ["Saraband", "Ingmar Bergman's Cinema - Center Piece One", "Blu-Ray", "", "2003", "Ingmar Bergman", "Swedish"],
+            ["From the Life of the Marionettes", "Ingmar Bergman's Cinema - Center Piece One", "Blu-Ray", "", "1980", "Ingmar Bergman", "Swedish"],
+            ["Hour of the Wolf", "Ingmar Bergman's Cinema - Center Piece One", "Blu-Ray", "", "1968", "Ingmar Bergman", "Swedish"],
+            ["Shame", "Ingmar Bergman's Cinema - Center Piece One", "Blu-Ray", "", "1968", "Ingmar Bergman", "Swedish"],
+            ["The Passion of Anna", "Ingmar Bergman's Cinema - Center Piece One", "Blu-Ray", "", "1969", "Ingmar Bergman", "Swedish"],
+            ["Fårö Document", "Ingmar Bergman's Cinema - Center Piece One", "Blu-Ray", "", "1970", "Ingmar Bergman", "Swedish"],
+            ["Fårö Document 1979", "Ingmar Bergman's Cinema - Center Piece One", "Blu-Ray", "", "1979", "Ingmar Bergman", "Swedish"],
+            ["Through a Glass Darkly", "Ingmar Bergman's Cinema - Center Piece One", "Blu-Ray", "", "1961", "Ingmar Bergman", "Swedish"],
+            ["Winter Light", "Ingmar Bergman's Cinema - Center Piece One", "Blu-Ray", "", "1963", "Ingmar Bergman", "Swedish"],
+            ["The Silence", "Ingmar Bergman's Cinema - Center Piece One", "Blu-Ray", "", "1963", "Ingmar Bergman", "Swedish"],
+            ["The Virgin Spring", "Ingmar Bergman's Cinema - Center Piece One", "Blu-Ray", "", "1960", "Ingmar Bergman", "Swedish"],
+            ["The Seventh Seal", "Ingmar Bergman's Cinema - Center Piece Two", "Blu-Ray", "", "1957", "Ingmar Bergman", "Swedish"],
+            ["The Devil's Eye", "Ingmar Bergman's Cinema - Center Piece Two", "Blu-Ray", "", "1960", "Ingmar Bergman", "Swedish"],
+            ["All These Women", "Ingmar Bergman's Cinema - Center Piece Two", "Blu-Ray", "", "1964", "Ingmar Bergman", "Swedish"],
+            ["Sawdust and Tinsel", "Ingmar Bergman's Cinema - Center Piece Two", "Blu-Ray", "", "1953", "Ingmar Bergman", "Swedish"],
+            ["The Rite", "Ingmar Bergman's Cinema - Center Piece Two", "Blu-Ray", "", "1969", "Ingmar Bergman", "Swedish"],
+            ["The Magician", "Ingmar Bergman's Cinema - Center Piece Two", "Blu-Ray", "", "1958", "Ingmar Bergman", "Swedish"],
+            ["The Magic Flute", "Ingmar Bergman's Cinema - Center Piece Two", "Blu-Ray", "", "1975", "Ingmar Bergman", "Swedish"],
+            ["After the Rehearsal", "Ingmar Bergman's Cinema - Center Piece Two", "Blu-Ray", "", "1984", "Ingmar Bergman", "Swedish"],
+            ["The Touch", "Ingmar Bergman's Cinema - Center Piece Two", "Blu-Ray", "", "1971", "Ingmar Bergman", "Swedish"],
+            ["The Serpent's Egg", "Ingmar Bergman's Cinema - Center Piece Two", "Blu-Ray", "", "1977", "Ingmar Bergman", "Swedish"],
+            ["Persona", "Ingmar Bergman's Cinema - Center Piece Three", "Blu-Ray", "", "1966", "Ingmar Bergman", "Swedish"],
+            ["Thirst", "Ingmar Bergman's Cinema - Center Piece Three", "Blu-Ray", "", "1949", "Ingmar Bergman", "Swedish"],
+            ["Port of Call", "Ingmar Bergman's Cinema - Center Piece Three", "Blu-Ray", "", "1948", "Ingmar Bergman", "Swedish"],
+            ["Cries and Whispers", "Ingmar Bergman's Cinema - Center Piece Three", "Blu-Ray", "", "1972", "Ingmar Bergman", "Swedish"],
+            ["Waiting Women", "Ingmar Bergman's Cinema - Center Piece Three", "Blu-Ray", "", "1952", "Ingmar Bergman", "Swedish"],
+            ["Brink of Life", "Ingmar Bergman's Cinema - Center Piece Three", "Blu-Ray", "", "1958", "Ingmar Bergman", "Swedish"],
+            ["Autumn Sonata", "Ingmar Bergman's Cinema - Center Piece Three", "Blu-Ray", "", "1978", "Ingmar Bergman", "Swedish"],
+            ["Fanny and Alexander", "Ingmar Bergman's Cinema - Closing Night", "Blu-Ray", "", "1982", "Ingmar Bergman", "Swedish"],
+            ["The Suitor", "Pierre Etaix", "Blu-Ray", "", "1963", "Pierre Etaix", "French"],
+            ["Yo-Yo", "Pierre Etaix", "Blu-Ray", "", "1965", "Pierre Etaix", "French"],
+            ["As Long as You've Got Your Health", "Pierre Etaix", "Blu-Ray", "", "1966", "Pierre Etaix", "French"],
+            ["Le Grand Amour", "Pierre Etaix", "Blu-Ray", "", "1969", "Pierre Etaix", "French"],
+            ["Land of Milk and Honey", "Pierre Etaix", "Blu-Ray", "", "1971", "Pierre Etaix", "French"],
+            ["The Bakery Girl of Monceau", "Six Moral Tales", "Blu-Ray", "", "1963", "Éric Rohmer", "French"],
+            ["Suzanne's Career", "Six Moral Tales", "Blu-Ray", "", "1963", "Éric Rohmer", "French"],
+            ["My Night at Maud's", "Six Moral Tales", "Blu-Ray", "", "1969", "Éric Rohmer", "French"],
+            ["La Collectionneuse", "Six Moral Tales", "Blu-Ray", "", "1967", "Éric Rohmer", "French"],
+            ["Claire's Knee", "Six Moral Tales", "Blu-Ray", "", "1970", "Éric Rohmer", "French"],
+            ["Love in the Afternoon", "Six Moral Tales", "Blu-Ray", "", "1972", "Éric Rohmer", "French"],
+            ["A Story of Floating Weeds", "Two Films by Yasujirō Ozu", "Blu-Ray", "", "1934", "Yasujirō Ozu", "Japanese"],
+            ["Floating Weeds", "Two Films by Yasujirō Ozu", "Blu-Ray", "", "1959", "Yasujirō Ozu", "Japanese"],
+            ["Early Spring", "Eclipse Series 3: Late Ozu", "DVD", "", "1956", "Yasujirō Ozu", "Japanese"],
+            ["Tokyo Twilight", "Eclipse Series 3: Late Ozu", "DVD", "", "1957", "Yasujirō Ozu", "Japanese"],
+            ["Equinox Flower", "Eclipse Series 3: Late Ozu", "DVD", "", "1958", "Yasujirō Ozu", "Japanese"],
+            ["Late Autumn", "Eclipse Series 3: Late Ozu", "DVD", "", "1960", "Yasujirō Ozu", "Japanese"],
+            ["The End of Summer", "Eclipse Series 3: Late Ozu", "DVD", "", "1961", "Yasujirō Ozu", "Japanese"],
+            ["Touki Bouki", "World Cinema Project No. 1", "Blu-Ray", "DVD", "1973", "Djibril Diop Mambéty", "Senegal"],
+            ["Redes", "World Cinema Project No. 1", "Blu-Ray", "DVD", "1936", "Fred Zinnemann & Emilio Gómez Muriel", "Spanish"],
+            ["A River Called Titas", "World Cinema Project No. 1", "Blu-Ray", "DVD", "1973", "Ritwik Ghatak", "Bengali"],
+            ["Dry Summer", "World Cinema Project No. 1", "Blu-Ray", "DVD", "1964", "Metin Erksan", "Turkish"],
+            ["Trances", "World Cinema Project No. 1", "Blu-Ray", "DVD", "1981", "Ahmed El Maanouni", "Arabic"],
+            ["Insiang", "World Cinema Project No. 2", "Blu-Ray", "DVD", "1976", "Lino Brocka", "Filipino"],
+            ["Mysterious Object at Noon", "World Cinema Project No. 2", "Blu-Ray", "DVD", "2000", "Apichatpong Weerasethakul", "Thai"],
+            ["Revenge", "World Cinema Project No. 2", "Blu-Ray", "DVD", "1989", "Ermek Shinarbaev", "Russian"],
+            ["Limite", "World Cinema Project No. 2", "Blu-Ray", "DVD", "1931", "Mário Peixoto", "Portuguese"],
+            ["Law of the Border", "World Cinema Project No. 2", "Blu-Ray", "DVD", "1966", "Lütfi Ömer Akad", "Turkish"],
+            ["Taipei Story", "World Cinema Project No. 2", "Blu-Ray", "DVD", "1985", "Edward Yang", "Mandarin"],
+            ["Lucía", "World Cinema Project No. 3", "Blu-Ray", "DVD", "1968", "Humberto Solás", "Spanish"],
+            ["After the Curfew", "World Cinema Project No. 3", "Blu-Ray", "DVD", "1954", "Usmar Ismail", "Indonesian"],
+            ["Pixote", "World Cinema Project No. 3", "Blu-Ray", "DVD", "1980", "Héctor Babenco", "Portuguese"],
+            ["Dos Monjes", "World Cinema Project No. 3", "Blu-Ray", "DVD", "1934", "Juan Bustillo Oro", "Spanish"],
+            ["Soleil Ô", "World Cinema Project No. 3", "Blu-Ray", "DVD", "1970", "Med Hondo", "French"],
+            ["Downpour", "World Cinema Project No. 3", "Blu-Ray", "DVD", "1972", "Bahram Beyzaie", "Persian"],
+            ["Sambizanga", "World Cinema Project No. 4", "Blu-Ray", "DVD", "1972", "Sarah Maldoror", "Portuguese"],
+            ["Prisioneros de la tierra", "World Cinema Project No. 4", "Blu-Ray", "DVD", "1939", "Mario Soffici", "Spanish"],
+            ["Chess of the Wind", "World Cinema Project No. 4", "Blu-Ray", "DVD", "1976", "Mohammad Reza Aslani", "Persian"],
+            ["Muna moto", "World Cinema Project No. 4", "Blu-Ray", "DVD", "1975", "Dikongué-Pipa", "French"],
+            ["Two Girls on the Street", "World Cinema Project No. 4", "Blu-Ray", "DVD", "1939", "André de Toth", "Hungarian"],
+            ["Kalpana", "World Cinema Project No. 4", "Blu-Ray", "DVD", "1948", "Udhay Shankar", "Hindi"]
+        ];
+
+        function formatBadge(value, isOscarColumn = false) {
+            if (!value || value === '') return '';
+            const lower = value.toLowerCase();
+            if (lower === 'yes') return '<span class="badge badge-yes">Yes</span>';
+            if (lower === 'no') return '<span class="badge badge-no">No</span>';
+            if (lower === '4k') return '<span class="badge badge-4k">4K</span>';
+            if (lower === 'blu-ray') return '<span class="badge badge-bluray">Blu-ray</span>';
+            if (lower === '4k/blu-ray') return '<span class="badge badge-4k">4K</span><span class="badge badge-bluray" style="margin-left: 5px;">Blu-ray</span>';
+            if (lower === 'digital only') return '<span class="badge" style="background: #9e9e9e; color: white;">Digital Only</span>';
+
+            // Format Oscar Best Picture year
+            if (isOscarColumn && value.match(/^\d{4}$/)) {
+                return `<span class="badge badge-oscar">🏆 ${value}</span>`;
+            }
+
+            return value;
+        }
+
+        const TMDB_API_KEY = '97d0664dd22bf75ee474e7397ffdd417'; // Replace with your TMDB API key
+        const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+        const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w500';
+
+        // Genre cache localStorage functions
+        function getGenreCache() {
+            const cache = localStorage.getItem('movieGenres');
+            return cache ? JSON.parse(cache) : {};
+        }
+
+        function setGenreCache(movieName, genres) {
+            const cache = getGenreCache();
+            cache[movieName] = genres;
+            localStorage.setItem('movieGenres', JSON.stringify(cache));
+        }
+
+        function getMovieGenre(movieName) {
+            const cache = getGenreCache();
+            return cache[movieName] || '';
+        }
+
+        async function fetchAndCacheGenre(movieName) {
+            try {
+                const searchUrl = `${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieName)}`;
+                const response = await fetch(searchUrl);
+                const data = await response.json();
+
+                if (data.results && data.results.length > 0) {
+                    const movie = data.results[0];
+                    const genreIds = movie.genre_ids || [];
+                    const genreMap = {
+                        28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy',
+                        80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family',
+                        14: 'Fantasy', 36: 'History', 27: 'Horror', 10402: 'Music',
+                        9648: 'Mystery', 10749: 'Romance', 878: 'Sci-Fi', 10770: 'TV',
+                        53: 'Thriller', 10752: 'War', 37: 'Western'
+                    };
+                    const genres = genreIds.slice(0, 2).map(id => genreMap[id]).filter(Boolean).join(', ');
+                    setGenreCache(movieName, genres);
+                    return genres;
+                }
+            } catch (error) {
+                console.error(`Error fetching genre for ${movieName}:`, error);
+            }
+            return '';
+        }
+
+        // Watched movies localStorage functions
+        function getWatchedMovies() {
+            const watched = localStorage.getItem('watchedMovies');
+            return watched ? JSON.parse(watched) : {};
+        }
+
+        function setWatchedStatus(movieName, collection, isWatched) {
+            const watched = getWatchedMovies();
+            const key = `${collection}:${movieName}`;
+            if (isWatched) {
+                watched[key] = true;
+            } else {
+                delete watched[key];
+            }
+            localStorage.setItem('watchedMovies', JSON.stringify(watched));
+            updateWatchedStats();
+        }
+
+        function isMovieWatched(movieName, collection) {
+            const watched = getWatchedMovies();
+            const key = `${collection}:${movieName}`;
+            return watched[key] === true;
+        }
+
+        function updateWatchedStats() {
+            const watched = getWatchedMovies();
+            const moviesWatched = Object.keys(watched).filter(k => k.startsWith('movies:')).length;
+            const docsWatched = Object.keys(watched).filter(k => k.startsWith('docs:')).length;
+            const criterionWatched = Object.keys(watched).filter(k => k.startsWith('criterion:')).length;
+            const totalWatched = moviesWatched + docsWatched + criterionWatched;
+
+            const watchedEl = document.getElementById('totalWatched');
+            if (watchedEl) {
+                watchedEl.textContent = totalWatched;
+            }
+        }
+
+        function populateTable(data, bodyId, columns, collectionName) {
+            const tbody = document.getElementById(bodyId);
+            tbody.innerHTML = '';
+            
+            const grouped = {};
+            const standalone = [];
+            
+            data.forEach(row => {
+                const boxedSet = row[1] && row[1].toLowerCase() !== 'no' && row[1].trim() !== '' ? row[1] : null;
+                if (boxedSet) {
+                    if (!grouped[boxedSet]) {
+                        grouped[boxedSet] = [];
+                    }
+                    grouped[boxedSet].push(row);
+                } else {
+                    standalone.push(row);
+                }
+            });
+            
+            const colors = [
+                'rgba(10, 132, 255, 0.08)', 'rgba(191, 90, 242, 0.08)', 'rgba(52, 199, 89, 0.08)',
+                'rgba(255, 159, 10, 0.08)', 'rgba(255, 69, 58, 0.08)', 'rgba(100, 210, 255, 0.08)',
+                'rgba(172, 142, 104, 0.08)', 'rgba(255, 214, 10, 0.08)', 'rgba(255, 55, 95, 0.08)',
+                'rgba(94, 92, 230, 0.08)'
+            ];
+            let colorIndex = 0;
+            
+            Object.keys(grouped).sort().forEach(boxedSet => {
+                const color = colors[colorIndex % colors.length];
+                colorIndex++;
+                
+                const headerRow = document.createElement('tr');
+                headerRow.className = 'boxed-set-header';
+                headerRow.style.backgroundColor = color;
+                const headerCell = document.createElement('td');
+                headerCell.colSpan = columns.length;
+                headerCell.innerHTML = `<strong>📦 ${boxedSet}</strong> <span style="opacity: 0.7;">(${grouped[boxedSet].length} items)</span>`;
+                headerRow.appendChild(headerCell);
+                tbody.appendChild(headerRow);
+                
+                grouped[boxedSet].forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.className = 'boxed-set-item';
+                    tr.style.backgroundColor = color;
+
+                    const movieName = row[0];
+                    const isWatched = isMovieWatched(movieName, collectionName);
+
+                    // Check if this is an Oscar winner (last column has a year)
+                    const oscarColumn = columns[columns.length - 1];
+                    const isOscarWinner = row[oscarColumn] && row[oscarColumn].match(/^\d{4}$/);
+                    if (isOscarWinner) {
+                        tr.classList.add('oscar-winner');
+                    }
+
+                    if (isWatched) {
+                        tr.classList.add('movie-watched');
+                    }
+
+                    let genreTdInserted = false;
+                    columns.forEach((idx, colIndex) => {
+                        const td = document.createElement('td');
+                        const isLastColumn = colIndex === columns.length - 1;
+                        if (colIndex === 0) {
+                            td.innerHTML = `<a href="#" class="movie-link" onclick="showMovieDetails('${row[idx].replace(/'/g, "\\'")}'); return false;">${row[idx]}</a>`;
+                        } else {
+                            // Special handling for movies collection - combine format and blu-ray
+                            if (collectionName === 'movies' && idx === 2) {
+                                // This is the format column
+                                const format = row[2] || '';
+                                const hasBluray = row[3] && row[3].toLowerCase() === 'yes';
+                                let displayFormat = format;
+                                if (format.toLowerCase() === '4k' && hasBluray) {
+                                    displayFormat = '4K/Blu-ray';
+                                } else if (format.toLowerCase() === '4k') {
+                                    displayFormat = '4K';
+                                } else if (hasBluray) {
+                                    displayFormat = 'Blu-ray';
+                                } else if (format.toLowerCase() === 'no') {
+                                    displayFormat = 'Digital Only';
+                                }
+                                td.innerHTML = formatBadge(displayFormat, false);
+                            } else {
+                                td.innerHTML = formatBadge(row[idx] || '', isLastColumn);
+                            }
+                        }
+                        tr.appendChild(td);
+
+                        // Insert genre column after format (for movies after idx 2, for others after idx 2)
+                        if (!genreTdInserted && ((collectionName === 'movies' && idx === 2) || (collectionName !== 'movies' && idx === 2))) {
+                            const genreTd = document.createElement('td');
+                            genreTd.style.fontSize = '0.85em';
+                            genreTd.style.color = '#666';
+                            const cachedGenre = getMovieGenre(movieName);
+                            if (cachedGenre) {
+                                genreTd.textContent = cachedGenre;
+                            } else {
+                                genreTd.textContent = '...';
+                                fetchAndCacheGenre(movieName).then(genre => {
+                                    if (genre) {
+                                        genreTd.textContent = genre;
+                                    } else {
+                                        genreTd.textContent = '-';
+                                    }
+                                });
+                            }
+                            tr.appendChild(genreTd);
+                            genreTdInserted = true;
+                        }
+                    });
+
+                    // Add watched checkbox column
+                    const watchedTd = document.createElement('td');
+                    watchedTd.className = 'watched-column';
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'watched-checkbox';
+                    checkbox.checked = isWatched;
+                    checkbox.onchange = function() {
+                        setWatchedStatus(movieName, collectionName, this.checked);
+                        if (this.checked) {
+                            tr.classList.add('movie-watched');
+                        } else {
+                            tr.classList.remove('movie-watched');
+                        }
+                    };
+                    watchedTd.appendChild(checkbox);
+                    tr.appendChild(watchedTd);
+
+                    tbody.appendChild(tr);
+                });
+                
+                const spacerRow = document.createElement('tr');
+                spacerRow.className = 'boxed-set-spacer';
+                const spacerCell = document.createElement('td');
+                spacerCell.colSpan = columns.length;
+                spacerCell.style.height = '10px';
+                spacerRow.appendChild(spacerCell);
+                tbody.appendChild(spacerRow);
+            });
+            
+            if (standalone.length > 0) {
+                const headerRow = document.createElement('tr');
+                headerRow.className = 'boxed-set-header';
+                headerRow.style.backgroundColor = '#1d1d1f';
+                const headerCell = document.createElement('td');
+                headerCell.colSpan = columns.length;
+                headerCell.innerHTML = `<strong>🎬 Individual Movies</strong> <span style="opacity: 0.7;">(${standalone.length} items)</span>`;
+                headerRow.appendChild(headerCell);
+                tbody.appendChild(headerRow);
+                
+                standalone.forEach(row => {
+                    const tr = document.createElement('tr');
+
+                    const movieName = row[0];
+                    const isWatched = isMovieWatched(movieName, collectionName);
+
+                    // Check if this is an Oscar winner (last column has a year)
+                    const oscarColumn = columns[columns.length - 1];
+                    const isOscarWinner = row[oscarColumn] && row[oscarColumn].match(/^\d{4}$/);
+                    if (isOscarWinner) {
+                        tr.classList.add('oscar-winner');
+                    }
+
+                    if (isWatched) {
+                        tr.classList.add('movie-watched');
+                    }
+
+                    let genreTdInserted = false;
+                    columns.forEach((idx, colIndex) => {
+                        const td = document.createElement('td');
+                        const isLastColumn = colIndex === columns.length - 1;
+                        if (colIndex === 0) {
+                            td.innerHTML = `<a href="#" class="movie-link" onclick="showMovieDetails('${row[idx].replace(/'/g, "\\'")}'); return false;">${row[idx]}</a>`;
+                        } else {
+                            // Special handling for movies collection - combine format and blu-ray
+                            if (collectionName === 'movies' && idx === 2) {
+                                // This is the format column
+                                const format = row[2] || '';
+                                const hasBluray = row[3] && row[3].toLowerCase() === 'yes';
+                                let displayFormat = format;
+                                if (format.toLowerCase() === '4k' && hasBluray) {
+                                    displayFormat = '4K/Blu-ray';
+                                } else if (format.toLowerCase() === '4k') {
+                                    displayFormat = '4K';
+                                } else if (hasBluray) {
+                                    displayFormat = 'Blu-ray';
+                                } else if (format.toLowerCase() === 'no') {
+                                    displayFormat = 'Digital Only';
+                                }
+                                td.innerHTML = formatBadge(displayFormat, false);
+                            } else {
+                                td.innerHTML = formatBadge(row[idx] || '', isLastColumn);
+                            }
+                        }
+                        tr.appendChild(td);
+
+                        // Insert genre column after format (for movies after idx 2, for others after idx 2)
+                        if (!genreTdInserted && ((collectionName === 'movies' && idx === 2) || (collectionName !== 'movies' && idx === 2))) {
+                            const genreTd = document.createElement('td');
+                            genreTd.style.fontSize = '0.85em';
+                            genreTd.style.color = '#666';
+                            const cachedGenre = getMovieGenre(movieName);
+                            if (cachedGenre) {
+                                genreTd.textContent = cachedGenre;
+                            } else {
+                                genreTd.textContent = '...';
+                                fetchAndCacheGenre(movieName).then(genre => {
+                                    if (genre) {
+                                        genreTd.textContent = genre;
+                                    } else {
+                                        genreTd.textContent = '-';
+                                    }
+                                });
+                            }
+                            tr.appendChild(genreTd);
+                            genreTdInserted = true;
+                        }
+                    });
+
+                    // Add watched checkbox column
+                    const watchedTd = document.createElement('td');
+                    watchedTd.className = 'watched-column';
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'watched-checkbox';
+                    checkbox.checked = isWatched;
+                    checkbox.onchange = function() {
+                        setWatchedStatus(movieName, collectionName, this.checked);
+                        if (this.checked) {
+                            tr.classList.add('movie-watched');
+                        } else {
+                            tr.classList.remove('movie-watched');
+                        }
+                    };
+                    watchedTd.appendChild(checkbox);
+                    tr.appendChild(watchedTd);
+
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        async function showMovieDetails(movieTitle) {
+            const modal = document.getElementById('movieModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modal.style.display = 'block';
+            modalTitle.textContent = movieTitle;
+            modalBody.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading movie details...</p></div>';
+            
+            try {
+                const searchUrl = `${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieTitle)}`;
+                const searchResponse = await fetch(searchUrl);
+                const searchData = await searchResponse.json();
+                
+                if (searchData.results && searchData.results.length > 0) {
+                    const movie = searchData.results[0];
+                    const detailsUrl = `${TMDB_BASE_URL}/movie/${movie.id}?api_key=${TMDB_API_KEY}`;
+                    const detailsResponse = await fetch(detailsUrl);
+                    const details = await detailsResponse.json();
+                    
+                    const posterUrl = details.poster_path ? `${TMDB_IMAGE_BASE}${details.poster_path}` : 'https://via.placeholder.com/300x450?text=No+Poster';
+                    
+                    modalBody.innerHTML = `
+                        <div class="movie-info">
+                            <div>
+                                <img src="${posterUrl}" alt="${details.title}" class="movie-poster" onerror="this.src='https://via.placeholder.com/300x450?text=No+Poster'">
+                            </div>
+                            <div class="movie-details">
+                                <div class="movie-meta">
+                                    ${details.release_date ? `<span class="meta-item">📅 ${new Date(details.release_date).getFullYear()}</span>` : ''}
+                                    ${details.runtime ? `<span class="meta-item">⏱️ ${details.runtime} min</span>` : ''}
+                                    ${details.vote_average ? `<span class="meta-item">⭐ ${details.vote_average.toFixed(1)}/10</span>` : ''}
+                                </div>
+                                ${details.genres && details.genres.length > 0 ? `
+                                    <div class="movie-meta">
+                                        ${details.genres.map(g => `<span class="meta-item">${g.name}</span>`).join('')}
+                                    </div>
+                                ` : ''}
+                                <div class="movie-overview">
+                                    <h3>Overview</h3>
+                                    <p>${details.overview || 'No overview available.'}</p>
+                                </div>
+                                ${details.tagline ? `<p style="font-style: italic; margin-top: 15px; color: #667eea;">"${details.tagline}"</p>` : ''}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    modalBody.innerHTML = `
+                        <div style="text-align: center; padding: 40px;">
+                            <p style="font-size: 1.2em; color: #666;">Movie details not found.</p>
+                            <p style="margin-top: 10px; color: #999;">Try searching for "${movieTitle}" on TMDB.</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error fetching movie details:', error);
+                modalBody.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <p style="font-size: 1.2em; color: #f44336;">Error loading movie details.</p>
+                        <p style="margin-top: 10px; color: #999;">Please check your API key and try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('movieModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('movieModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        function searchTable(tableId, searchTerm) {
+            const table = document.getElementById(tableId);
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            const term = searchTerm.toLowerCase();
+            let visibleCount = 0;
+
+            for (let row of rows) {
+                const text = row.textContent.toLowerCase();
+                if (text.includes(term)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+
+            const tbody = table.getElementsByTagName('tbody')[0];
+            let noResults = tbody.querySelector('.no-results');
+            
+            if (visibleCount === 0 && searchTerm !== '') {
+                if (!noResults) {
+                    noResults = document.createElement('tr');
+                    noResults.className = 'no-results';
+                    noResults.innerHTML = '<td colspan="10" class="no-results">No results found</td>';
+                    tbody.appendChild(noResults);
+                }
+            } else if (noResults) {
+                noResults.remove();
+            }
+        }
+
+        function showTab(tabName) {
+            const contents = document.getElementsByClassName('tab-content');
+            for (let content of contents) {
+                content.classList.remove('active');
+            }
+
+            const tabs = document.getElementsByClassName('tab');
+            for (let tab of tabs) {
+                tab.classList.remove('active');
+            }
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function calculateStats() {
+            // Count 4K movies (format column)
+            const count4k = moviesData.filter(m => m[2] && m[2].toLowerCase() === '4k').length;
+            
+            // Count Blu-ray movies (includes Blu-ray column)
+            const countBluray = moviesData.filter(m => m[3] && m[3].toLowerCase() === 'yes').length;
+            
+            // Count Digital copies
+            const countDigital = moviesData.filter(m => m[4] && m[4].toLowerCase() === 'yes').length;
+            
+            // Count 4K in Criterion (format column, index 2)
+            const criterion4k = criterionData.filter(c => c[2] && c[2].toLowerCase() === '4k').length;
+            
+            // Count Blu-ray in Criterion (includes Blu-ray column, index 3)
+            const criterionBluray = criterionData.filter(c => c[3] && c[3].toLowerCase() === 'yes').length;
+            
+            // Total 4K across all collections
+            const total4k = count4k + criterion4k;
+            
+            // Total Blu-ray across all collections (including those with 4K which also have Blu-ray)
+            const totalBluray = countBluray + criterionBluray;
+
+            // Count Oscar Best Picture winners (last column has a year)
+            const moviesOscars = moviesData.filter(m => m[7] && m[7].match(/^\d{4}$/)).length;
+            const criterionOscars = criterionData.filter(c => c[7] && c[7].match(/^\d{4}$/)).length;
+            const totalOscars = moviesOscars + criterionOscars;
+
+            document.getElementById('totalMovies').textContent = moviesData.length;
+            document.getElementById('total4k').textContent = total4k;
+            document.getElementById('totalBluray').textContent = totalBluray;
+            document.getElementById('totalDigital').textContent = countDigital;
+            document.getElementById('totalDocs').textContent = docsData.length;
+            document.getElementById('totalCriterion').textContent = criterionData.length;
+            document.getElementById('totalOscars').textContent = totalOscars;
+        }
+
+        const criterionOscars = {
+            "The Last Emperor": "1988",
+            "The Silence of the Lambs": "1992",
+            "The Shape of Water": "2018"
+        };
+        
+        criterionData.forEach(row => {
+            if (row.length === 7) {
+                row.push(criterionOscars[row[0]] || "");
+            }
+        });
+
+        populateTable(moviesData, 'moviesBody', [0, 1, 2, 4, 5, 6, 7], 'movies');
+        populateTable(docsData, 'docsBody', [0, 1, 2, 3, 4, 5], 'docs');
+        populateTable(criterionData, 'criterionBody', [0, 1, 2, 4, 5, 6, 7], 'criterion');
+        calculateStats();
+        updateWatchedStats();
+    </script>
+</body>
+</html>
