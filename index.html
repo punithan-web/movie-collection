@@ -723,19 +723,19 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                             <div>
                                 <label style="display: block; margin-bottom: 6px; color: #d1d1d6; font-weight: 500;">Director</label>
-                                <input type="text" id="director" style="width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 8px; color: #f5f5f7; font-size: 0.95em;">
+                                <input type="text" id="director" placeholder="Auto-fetched from TMDB" style="width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 8px; color: #f5f5f7; font-size: 0.95em;">
                             </div>
 
                             <div>
                                 <label style="display: block; margin-bottom: 6px; color: #d1d1d6; font-weight: 500;">Language</label>
-                                <input type="text" id="language" placeholder="e.g., French, Japanese" style="width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 8px; color: #f5f5f7; font-size: 0.95em;">
+                                <input type="text" id="language" placeholder="Auto-fetched from TMDB" style="width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 8px; color: #f5f5f7; font-size: 0.95em;">
                             </div>
                         </div>
                     </div>
 
                     <div style="margin-top: 8px; padding: 12px; background: rgba(10, 132, 255, 0.1); border-radius: 8px; border: 1px solid rgba(10, 132, 255, 0.2);">
                         <p style="margin: 0; color: #d1d1d6; font-size: 0.9em;">
-                            💡 Release year and genre will be automatically fetched from TMDB when you enter the movie name.
+                            💡 Release year, genre, language, and director will be automatically fetched from TMDB when you enter the movie name.
                         </p>
                     </div>
 
@@ -1742,12 +1742,15 @@
 
                                 if (data.results && data.results.length > 0) {
                                     const movie = data.results[0];
+                                    const movieId = movie.id;
+
                                     // Set release year
                                     if (movie.release_date) {
                                         const year = movie.release_date.split('-')[0];
                                         document.getElementById('releaseYear').value = year;
                                         document.getElementById('releaseYear').style.color = '#32d74b';
                                     }
+
                                     // Cache genre for later
                                     const genreIds = movie.genre_ids || [];
                                     const genreMap = {
@@ -1760,6 +1763,45 @@
                                     const genres = genreIds.slice(0, 2).map(id => genreMap[id]).filter(Boolean).join(', ');
                                     if (genres) {
                                         setGenreCache(movieName, genres);
+                                    }
+
+                                    // Fetch detailed movie info including language and director
+                                    const detailsUrl = `${TMDB_BASE_URL}/movie/${movieId}?api_key=${TMDB_API_KEY}&append_to_response=credits`;
+                                    const detailsResponse = await fetch(detailsUrl);
+                                    const details = await detailsResponse.json();
+
+                                    // Get original language and convert to readable name
+                                    if (details.original_language) {
+                                        const languageMap = {
+                                            'en': 'English', 'es': 'Spanish', 'fr': 'French', 'de': 'German',
+                                            'it': 'Italian', 'ja': 'Japanese', 'ko': 'Korean', 'zh': 'Chinese',
+                                            'ru': 'Russian', 'pt': 'Portuguese', 'ar': 'Arabic', 'hi': 'Hindi',
+                                            'sv': 'Swedish', 'no': 'Norwegian', 'da': 'Danish', 'fi': 'Finnish',
+                                            'nl': 'Dutch', 'pl': 'Polish', 'tr': 'Turkish', 'th': 'Thai',
+                                            'vi': 'Vietnamese', 'id': 'Indonesian', 'cs': 'Czech', 'el': 'Greek',
+                                            'he': 'Hebrew', 'fa': 'Persian', 'ur': 'Urdu', 'bn': 'Bengali',
+                                            'ta': 'Tamil', 'te': 'Telugu', 'mr': 'Marathi', 'kn': 'Kannada'
+                                        };
+                                        const language = languageMap[details.original_language] || details.original_language.toUpperCase();
+                                        const languageInput = document.getElementById('language');
+                                        if (languageInput) {
+                                            languageInput.value = language;
+                                            languageInput.style.color = '#32d74b';
+                                            languageInput.style.background = '#1c1c1e';
+                                        }
+                                    }
+
+                                    // Get director from credits
+                                    if (details.credits && details.credits.crew) {
+                                        const director = details.credits.crew.find(person => person.job === 'Director');
+                                        if (director) {
+                                            const directorInput = document.getElementById('director');
+                                            if (directorInput) {
+                                                directorInput.value = director.name;
+                                                directorInput.style.color = '#32d74b';
+                                                directorInput.style.background = '#1c1c1e';
+                                            }
+                                        }
                                     }
                                 }
                             } catch (error) {
