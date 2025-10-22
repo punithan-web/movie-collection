@@ -513,7 +513,12 @@
         </div>
 
         <div id="movies" class="tab-content active">
-            <input type="text" class="search-box" placeholder="Search movies..." onkeyup="searchTable('moviesTable', this.value)">
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                <input type="text" class="search-box" placeholder="Search movies..." onkeyup="searchTable('moviesTable', this.value)" style="flex: 1; min-width: 300px;">
+                <button onclick="openAddMovieModal()" style="padding: 14px 28px; background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.95em; transition: all 0.2s; white-space: nowrap;">
+                    + Add Movie
+                </button>
+            </div>
             <div style="overflow-x: auto;">
                 <table id="moviesTable">
                     <thead>
@@ -526,14 +531,13 @@
                             <th>Platform</th>
                             <th>Release Year</th>
                             <th>Oscar Best Picture</th>
-                            <th class="watched-column">Watched</th>
+                            <th>Watched</th>
                         </tr>
                     </thead>
                     <tbody id="moviesBody"></tbody>
                 </table>
             </div>
         </div>
-
         <div id="documentaries" class="tab-content">
             <input type="text" class="search-box" placeholder="Search documentaries..." onkeyup="searchTable('docsTable', this.value)">
             <div style="overflow-x: auto;">
@@ -633,6 +637,92 @@
                     <div class="spinner"></div>
                     <p>Loading movie details...</p>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Movie Modal -->
+    <div id="addMovieModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Add New Movie</h2>
+                <span class="close" onclick="closeAddMovieModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addMovieForm" onsubmit="handleAddMovie(event)" style="display: flex; flex-direction: column; gap: 16px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 6px; color: #d1d1d6; font-weight: 500;">Movie Name *</label>
+                        <input type="text" id="movieName" required style="width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 8px; color: #f5f5f7; font-size: 0.95em;">
+                    </div>
+
+                    <div>
+                        <label style="display: block; margin-bottom: 6px; color: #d1d1d6; font-weight: 500;">Boxed Set</label>
+                        <input type="text" id="boxedSet" style="width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 8px; color: #f5f5f7; font-size: 0.95em;">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 6px; color: #d1d1d6; font-weight: 500;">Format</label>
+                            <select id="format" style="width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 8px; color: #f5f5f7; font-size: 0.95em;">
+                                <option value="4k">4K</option>
+                                <option value="Blu-ray">Blu-ray</option>
+                                <option value="no">Digital Only</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="display: block; margin-bottom: 6px; color: #d1d1d6; font-weight: 500;">Includes Blu-ray?</label>
+                            <select id="includesBluray" style="width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 8px; color: #f5f5f7; font-size: 0.95em;">
+                                <option value="">N/A</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 6px; color: #d1d1d6; font-weight: 500;">Digital Copy?</label>
+                            <select id="digital" style="width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 8px; color: #f5f5f7; font-size: 0.95em;">
+                                <option value="">N/A</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label style="display: block; margin-bottom: 6px; color: #d1d1d6; font-weight: 500;">Platform</label>
+                            <input type="text" id="platform" placeholder="e.g., AppleTV" style="width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 8px; color: #f5f5f7; font-size: 0.95em;">
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 6px; color: #d1d1d6; font-weight: 500;">Release Year</label>
+                            <input type="text" id="releaseYear" placeholder="Auto-fetched from TMDB" readonly style="width: 100%; padding: 12px; background: #1c1c1e; border: 1px solid #3a3a3c; border-radius: 8px; color: #98989d; font-size: 0.95em;">
+                        </div>
+
+                        <div>
+                            <label style="display: block; margin-bottom: 6px; color: #d1d1d6; font-weight: 500;">Oscar Year</label>
+                            <input type="text" id="oscarYear" placeholder="e.g., 2023" style="width: 100%; padding: 12px; background: #2c2c2e; border: 1px solid #3a3a3c; border-radius: 8px; color: #f5f5f7; font-size: 0.95em;">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 8px; padding: 12px; background: rgba(10, 132, 255, 0.1); border-radius: 8px; border: 1px solid rgba(10, 132, 255, 0.2);">
+                        <p style="margin: 0; color: #d1d1d6; font-size: 0.9em;">
+                            💡 Release year and genre will be automatically fetched from TMDB when you enter the movie name.
+                        </p>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; margin-top: 8px;">
+                        <button type="submit" style="flex: 1; padding: 14px; background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 1em;">
+                            Add Movie
+                        </button>
+                        <button type="button" onclick="closeAddMovieModal()" style="flex: 1; padding: 14px; background: #2c2c2e; color: #f5f5f7; border: 1px solid #3a3a3c; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 1em;">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -1530,7 +1620,120 @@
             }
         });
 
-        populateTable(moviesData, 'moviesBody', [0, 1, 2, 4, 5, 6, 7], 'movies');
+        // Custom movies stored in localStorage
+        function getCustomMovies() {
+            const custom = localStorage.getItem('customMovies');
+            return custom ? JSON.parse(custom) : [];
+        }
+
+        function saveCustomMovies(movies) {
+            localStorage.setItem('customMovies', JSON.stringify(movies));
+        }
+
+        function getAllMovies() {
+            return [...moviesData, ...getCustomMovies()];
+        }
+
+        // Add Movie Modal Functions
+        function openAddMovieModal() {
+            document.getElementById('addMovieModal').style.display = 'flex';
+            document.getElementById('addMovieForm').reset();
+            document.getElementById('releaseYear').value = '';
+        }
+
+        function closeAddMovieModal() {
+            document.getElementById('addMovieModal').style.display = 'none';
+        }
+
+        // Auto-fetch movie data when typing movie name
+        let fetchTimeout;
+        document.addEventListener('DOMContentLoaded', function() {
+            const movieNameInput = document.getElementById('movieName');
+            if (movieNameInput) {
+                movieNameInput.addEventListener('input', function(e) {
+                    clearTimeout(fetchTimeout);
+                    const movieName = e.target.value.trim();
+                    if (movieName.length > 2) {
+                        fetchTimeout = setTimeout(async () => {
+                            try {
+                                const searchUrl = `${TMDB_BASE_URL}/search/movie?api_key=${TMDB_API_KEY}&query=${encodeURIComponent(movieName)}`;
+                                const response = await fetch(searchUrl);
+                                const data = await response.json();
+
+                                if (data.results && data.results.length > 0) {
+                                    const movie = data.results[0];
+                                    // Set release year
+                                    if (movie.release_date) {
+                                        const year = movie.release_date.split('-')[0];
+                                        document.getElementById('releaseYear').value = year;
+                                        document.getElementById('releaseYear').style.color = '#32d74b';
+                                    }
+                                    // Cache genre for later
+                                    const genreIds = movie.genre_ids || [];
+                                    const genreMap = {
+                                        28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy',
+                                        80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family',
+                                        14: 'Fantasy', 36: 'History', 27: 'Horror', 10402: 'Music',
+                                        9648: 'Mystery', 10749: 'Romance', 878: 'Sci-Fi', 10770: 'TV',
+                                        53: 'Thriller', 10752: 'War', 37: 'Western'
+                                    };
+                                    const genres = genreIds.slice(0, 2).map(id => genreMap[id]).filter(Boolean).join(', ');
+                                    if (genres) {
+                                        setGenreCache(movieName, genres);
+                                    }
+                                }
+                            } catch (error) {
+                                console.error('Error fetching movie data:', error);
+                            }
+                        }, 500);
+                    }
+                });
+            }
+        });
+
+        async function handleAddMovie(event) {
+            event.preventDefault();
+
+            const movieName = document.getElementById('movieName').value.trim();
+            const boxedSet = document.getElementById('boxedSet').value.trim();
+            const format = document.getElementById('format').value;
+            const includesBluray = document.getElementById('includesBluray').value;
+            const digital = document.getElementById('digital').value;
+            const platform = document.getElementById('platform').value.trim();
+            const releaseYear = document.getElementById('releaseYear').value.trim();
+            const oscarYear = document.getElementById('oscarYear').value.trim();
+
+            // Create new movie entry
+            const newMovie = [
+                movieName,
+                boxedSet,
+                format,
+                includesBluray,
+                digital,
+                platform,
+                releaseYear,
+                oscarYear
+            ];
+
+            // Save to localStorage
+            const customMovies = getCustomMovies();
+            customMovies.push(newMovie);
+            saveCustomMovies(customMovies);
+
+            // Refresh the table
+            const allMovies = getAllMovies();
+            populateTable(allMovies, 'moviesBody', [0, 1, 2, 4, 5, 6, 7], 'movies');
+            calculateStats();
+
+            // Close modal
+            closeAddMovieModal();
+
+            // Show success message
+            alert(`✅ "${movieName}" has been added to your collection!`);
+        }
+
+        // Initialize tables with all movies (including custom ones)
+        populateTable(getAllMovies(), 'moviesBody', [0, 1, 2, 4, 5, 6, 7], 'movies');
         populateTable(docsData, 'docsBody', [0, 1, 2, 3, 4, 5], 'docs');
         populateTable(criterionData, 'criterionBody', [0, 1, 2, 4, 5, 6, 7], 'criterion');
         calculateStats();
