@@ -1242,14 +1242,33 @@
             // Helper function to extract series name from movie title
             function getSeriesName(title) {
                 // Remove common sequel indicators
-                const cleaned = title
-                    .replace(/\s+(Part|Part\s+)\s*[IVXLCDM\d]+/gi, '')  // Remove "Part II", "Part 2", "Part Two"
-                    .replace(/\s+[IVXLCDM]+$/,'')  // Remove trailing Roman numerals
-                    .replace(/\s+\d+$/,'')  // Remove trailing numbers like " 2"
-                    .replace(/:\s+Part\s+.+$/i, '')  // Remove ": Part X"
-                    .replace(/:\s+.+$/, '')  // Remove subtitle after colon
-                    .replace(/\s+-\s+.+$/, '')  // Remove subtitle after dash
-                    .trim();
+                let cleaned = title;
+
+                // Handle ": Part X" format first (like "Dune: Part Two")
+                cleaned = cleaned.replace(/:\s+Part\s+.+$/i, '');
+
+                // Handle "Part II", "Part III", "Part 2" etc.
+                cleaned = cleaned.replace(/\s+Part\s+[IVXLCDM\d]+/gi, '');
+
+                // Remove trailing Roman numerals (like " II", " III")
+                cleaned = cleaned.replace(/\s+[IVXLCDM]+$/i,'');
+
+                // Remove trailing numbers with space (like " 2", " 3")
+                cleaned = cleaned.replace(/\s+\d+$/,'');
+
+                // Remove subtitle after colon
+                cleaned = cleaned.replace(/:\s+.+$/, '');
+
+                // Remove subtitle after dash
+                cleaned = cleaned.replace(/\s+-\s+.+$/, '');
+
+                cleaned = cleaned.trim();
+
+                // Debug logging
+                if (cleaned !== title) {
+                    console.log(`Series detected: "${title}" → "${cleaned}"`);
+                }
+
                 return cleaned;
             }
 
@@ -1279,6 +1298,7 @@
                         seriesMap[seriesName] = [];
                     }
                     seriesMap[seriesName].push(row);
+                    console.log(`Adding "${movieTitle}" to series "${seriesName}"`);
                 } else {
                     trueStandalone.push(row);
                 }
@@ -1288,8 +1308,10 @@
             Object.keys(seriesMap).forEach(seriesName => {
                 if (seriesMap[seriesName].length >= 2) {
                     grouped[`${seriesName} Series`] = seriesMap[seriesName];
+                    console.log(`Created series group: "${seriesName} Series" with ${seriesMap[seriesName].length} movies`);
                 } else {
                     trueStandalone.push(...seriesMap[seriesName]);
+                    console.log(`"${seriesName}" only has 1 movie, moving to standalone`);
                 }
             });
             
