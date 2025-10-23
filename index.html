@@ -1235,10 +1235,23 @@
         function populateTable(data, bodyId, columns, collectionName) {
             const tbody = document.getElementById(bodyId);
             tbody.innerHTML = '';
-            
+
             const grouped = {};
             const standalone = [];
-            
+
+            // Helper function to extract series name from movie title
+            function getSeriesName(title) {
+                // Remove common sequel indicators
+                const cleaned = title
+                    .replace(/\s+(Part|Vol\.|Volume|Chapter)\s+\d+/i, '')
+                    .replace(/\s+\d+$/,'')  // Remove trailing numbers
+                    .replace(/\s+[IVXLCDM]+$/,'')  // Remove Roman numerals
+                    .replace(/:\s+.+$/, '')  // Remove subtitle after colon
+                    .replace(/\s+-\s+.+$/, '')  // Remove subtitle after dash
+                    .trim();
+                return cleaned;
+            }
+
             data.forEach(row => {
                 const boxedSet = row[1] && row[1].toLowerCase() !== 'no' && row[1].trim() !== '' ? row[1] : null;
                 if (boxedSet) {
@@ -1248,6 +1261,34 @@
                     grouped[boxedSet].push(row);
                 } else {
                     standalone.push(row);
+                }
+            });
+
+            // Auto-detect series in standalone movies
+            const seriesMap = {};
+            const trueStandalone = [];
+
+            standalone.forEach(row => {
+                const movieTitle = row[0];
+                const seriesName = getSeriesName(movieTitle);
+
+                // Check if this might be part of a series (has numbers, Part, etc.)
+                if (seriesName !== movieTitle && seriesName.length > 2) {
+                    if (!seriesMap[seriesName]) {
+                        seriesMap[seriesName] = [];
+                    }
+                    seriesMap[seriesName].push(row);
+                } else {
+                    trueStandalone.push(row);
+                }
+            });
+
+            // Only create series groups if there are 2+ movies in the series
+            Object.keys(seriesMap).forEach(seriesName => {
+                if (seriesMap[seriesName].length >= 2) {
+                    grouped[`${seriesName} Series`] = seriesMap[seriesName];
+                } else {
+                    trueStandalone.push(...seriesMap[seriesName]);
                 }
             });
             
@@ -1373,17 +1414,17 @@
                 tbody.appendChild(spacerRow);
             });
             
-            if (standalone.length > 0) {
+            if (trueStandalone.length > 0) {
                 const headerRow = document.createElement('tr');
                 headerRow.className = 'boxed-set-header';
                 headerRow.style.backgroundColor = '#1d1d1f';
                 const headerCell = document.createElement('td');
                 headerCell.colSpan = columns.length;
-                headerCell.innerHTML = `<strong>🎬 Individual Movies</strong> <span style="opacity: 0.7;">(${standalone.length} items)</span>`;
+                headerCell.innerHTML = `<strong>🎬 Individual Movies</strong> <span style="opacity: 0.7;">(${trueStandalone.length} items)</span>`;
                 headerRow.appendChild(headerCell);
                 tbody.appendChild(headerRow);
-                
-                standalone.forEach(row => {
+
+                trueStandalone.forEach(row => {
                     const tr = document.createElement('tr');
 
                     const movieName = row[0];
