@@ -1286,8 +1286,9 @@
 
             // Auto-detect series in standalone movies
             const seriesMap = {};
-            const trueStandalone = [];
+            const pendingStandalone = [];
 
+            // First pass: detect sequels and build series map
             standalone.forEach(row => {
                 const movieTitle = row[0];
                 const seriesName = getSeriesName(movieTitle);
@@ -1300,6 +1301,26 @@
                     seriesMap[seriesName].push(row);
                     console.log(`Adding "${movieTitle}" to series "${seriesName}"`);
                 } else {
+                    pendingStandalone.push(row);
+                }
+            });
+
+            // Second pass: find base movies that match detected series
+            const trueStandalone = [];
+            pendingStandalone.forEach(row => {
+                const movieTitle = row[0];
+                let foundSeries = false;
+
+                // Check if this movie matches any detected series name
+                Object.keys(seriesMap).forEach(seriesName => {
+                    if (movieTitle === seriesName || movieTitle.startsWith(seriesName + ' ') || movieTitle.startsWith(seriesName + ':')) {
+                        seriesMap[seriesName].push(row);
+                        console.log(`Adding base movie "${movieTitle}" to series "${seriesName}"`);
+                        foundSeries = true;
+                    }
+                });
+
+                if (!foundSeries) {
                     trueStandalone.push(row);
                 }
             });
