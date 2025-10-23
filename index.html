@@ -1243,9 +1243,10 @@
             function getSeriesName(title) {
                 // Remove common sequel indicators
                 const cleaned = title
-                    .replace(/\s+(Part|Vol\.|Volume|Chapter)\s+\d+/i, '')
-                    .replace(/\s+\d+$/,'')  // Remove trailing numbers
-                    .replace(/\s+[IVXLCDM]+$/,'')  // Remove Roman numerals
+                    .replace(/\s+(Part|Part\s+)\s*[IVXLCDM\d]+/gi, '')  // Remove "Part II", "Part 2", "Part Two"
+                    .replace(/\s+[IVXLCDM]+$/,'')  // Remove trailing Roman numerals
+                    .replace(/\s+\d+$/,'')  // Remove trailing numbers like " 2"
+                    .replace(/:\s+Part\s+.+$/i, '')  // Remove ": Part X"
                     .replace(/:\s+.+$/, '')  // Remove subtitle after colon
                     .replace(/\s+-\s+.+$/, '')  // Remove subtitle after dash
                     .trim();
