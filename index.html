@@ -1207,6 +1207,31 @@
             return '';
         }
 
+        // Known animation movies (for cases where TMDB search might fail)
+        const knownAnimationMovies = [
+            'WALL-E',
+            'My Neighbor Totoro',
+            'Porco Rosso',
+            'Spirited Away',
+            'Lupin the Third: The Castle of Cagliostro',
+            'Princess Mononoke',
+            'Nausicaä of the Valley of the Wind',
+            'The Wind Rises',
+            'Kiki\'s Delivery Service',
+            'Howl\'s Moving Castle',
+            'Ponyo',
+            'Ghost in the Shell',
+            'Fantastic Mr. Fox',
+            'Flow'
+        ];
+
+        function isKnownAnimation(movieTitle) {
+            return knownAnimationMovies.some(animTitle =>
+                movieTitle.toLowerCase().includes(animTitle.toLowerCase()) ||
+                animTitle.toLowerCase().includes(movieTitle.toLowerCase())
+            );
+        }
+
         // Watched movies localStorage functions
         function getWatchedMovies() {
             const watched = localStorage.getItem('watchedMovies');
@@ -1384,10 +1409,14 @@
                         tr.classList.add('oscar-winner');
                     }
 
-                    // Check if this is an animation movie (from cached genre)
-                    const cachedGenre = getMovieGenre(movieName);
-                    if (cachedGenre && cachedGenre.includes('Animation')) {
+                    // Check if this is an animation movie (from manual list or cached genre)
+                    if (isKnownAnimation(movieName)) {
                         tr.classList.add('animation-movie');
+                    } else {
+                        const cachedGenre = getMovieGenre(movieName);
+                        if (cachedGenre && cachedGenre.includes('Animation')) {
+                            tr.classList.add('animation-movie');
+                        }
                     }
 
                     if (isWatched) {
@@ -1503,10 +1532,14 @@
                         tr.classList.add('oscar-winner');
                     }
 
-                    // Check if this is an animation movie (from cached genre)
-                    const cachedGenre = getMovieGenre(movieName);
-                    if (cachedGenre && cachedGenre.includes('Animation')) {
+                    // Check if this is an animation movie (from manual list or cached genre)
+                    if (isKnownAnimation(movieName)) {
                         tr.classList.add('animation-movie');
+                    } else {
+                        const cachedGenre = getMovieGenre(movieName);
+                        if (cachedGenre && cachedGenre.includes('Animation')) {
+                            tr.classList.add('animation-movie');
+                        }
                     }
 
                     if (isWatched) {
