@@ -240,6 +240,18 @@
             font-weight: 500;
         }
 
+        .animation-movie {
+            background: linear-gradient(90deg, rgba(255, 105, 180, 0.12) 0%, rgba(147, 51, 234, 0.08) 100%) !important;
+            border-left: 3px solid #ff69b4 !important;
+        }
+
+        .badge-animation {
+            background: linear-gradient(135deg, rgba(255, 105, 180, 0.25) 0%, rgba(147, 51, 234, 0.25) 100%);
+            color: #ff69b4;
+            border: 1px solid rgba(255, 105, 180, 0.4);
+            font-weight: 600;
+        }
+
         .oscar-winner:hover {
             background: linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, rgba(255, 215, 0, 0.05) 100%) !important;
         }
@@ -1372,6 +1384,12 @@
                         tr.classList.add('oscar-winner');
                     }
 
+                    // Check if this is an animation movie (from cached genre)
+                    const cachedGenre = getMovieGenre(movieName);
+                    if (cachedGenre && cachedGenre.includes('Animation')) {
+                        tr.classList.add('animation-movie');
+                    }
+
                     if (isWatched) {
                         tr.classList.add('movie-watched');
                     }
@@ -1479,6 +1497,12 @@
                     const isOscarWinner = row[oscarColumn] && row[oscarColumn].match(/^\d{4}$/);
                     if (isOscarWinner) {
                         tr.classList.add('oscar-winner');
+                    }
+
+                    // Check if this is an animation movie (from cached genre)
+                    const cachedGenre = getMovieGenre(movieName);
+                    if (cachedGenre && cachedGenre.includes('Animation')) {
+                        tr.classList.add('animation-movie');
                     }
 
                     if (isWatched) {
