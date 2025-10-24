@@ -591,9 +591,21 @@
         <div id="stats" class="tab-content">
             <h2 style="margin-bottom: 20px; color: #f5f5f7; font-weight: 700;">Collection Statistics</h2>
             <div class="stats">
+                <div class="stat-card" style="background: rgba(10, 132, 255, 0.15); border: 1px solid rgba(10, 132, 255, 0.3);">
+                    <div class="stat-number" style="color: #0a84ff;" id="totalCollection">0</div>
+                    <div class="stat-label">🎬 Total Collection</div>
+                </div>
                 <div class="stat-card">
                     <div class="stat-number" id="totalMovies">0</div>
-                    <div class="stat-label">Total Movies</div>
+                    <div class="stat-label">Main Movies</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalCriterion">0</div>
+                    <div class="stat-label">Criterion Collection</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalDocs">0</div>
+                    <div class="stat-label">Documentaries</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number" id="total4k">0</div>
@@ -606,14 +618,6 @@
                 <div class="stat-card">
                     <div class="stat-number" id="totalDigital">0</div>
                     <div class="stat-label">Digital Copies</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="totalDocs">0</div>
-                    <div class="stat-label">Documentaries</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="totalCriterion">0</div>
-                    <div class="stat-label">Criterion Collection</div>
                 </div>
                 <div class="stat-card" style="background: rgba(255, 215, 0, 0.15); border: 1px solid rgba(255, 215, 0, 0.3);">
                     <div class="stat-number" style="color: #ffd700;" id="totalOscars">0</div>
@@ -1884,24 +1888,32 @@
         }
 
         function calculateStats() {
+            // Count individual collections
+            const mainMoviesCount = moviesData.length;
+            const criterionCount = criterionData.length;
+            const docsCount = docsData.length;
+
+            // Calculate total collection count
+            const totalCollectionCount = mainMoviesCount + criterionCount + docsCount;
+
             // Count 4K movies (format column)
             const count4k = moviesData.filter(m => m[2] && m[2].toLowerCase() === '4k').length;
-            
+
             // Count Blu-ray movies (includes Blu-ray column)
             const countBluray = moviesData.filter(m => m[3] && m[3].toLowerCase() === 'yes').length;
-            
+
             // Count Digital copies
             const countDigital = moviesData.filter(m => m[4] && m[4].toLowerCase() === 'yes').length;
-            
+
             // Count 4K in Criterion (format column, index 2)
             const criterion4k = criterionData.filter(c => c[2] && c[2].toLowerCase() === '4k').length;
-            
+
             // Count Blu-ray in Criterion (includes Blu-ray column, index 3)
             const criterionBluray = criterionData.filter(c => c[3] && c[3].toLowerCase() === 'yes').length;
-            
+
             // Total 4K across all collections
             const total4k = count4k + criterion4k;
-            
+
             // Total Blu-ray across all collections (including those with 4K which also have Blu-ray)
             const totalBluray = countBluray + criterionBluray;
 
@@ -1910,12 +1922,14 @@
             const criterionOscars = criterionData.filter(c => c[7] && c[7].match(/^\d{4}$/)).length;
             const totalOscars = moviesOscars + criterionOscars;
 
-            document.getElementById('totalMovies').textContent = moviesData.length;
+            // Update all statistics
+            document.getElementById('totalCollection').textContent = totalCollectionCount;
+            document.getElementById('totalMovies').textContent = mainMoviesCount;
+            document.getElementById('totalCriterion').textContent = criterionCount;
+            document.getElementById('totalDocs').textContent = docsCount;
             document.getElementById('total4k').textContent = total4k;
             document.getElementById('totalBluray').textContent = totalBluray;
             document.getElementById('totalDigital').textContent = countDigital;
-            document.getElementById('totalDocs').textContent = docsData.length;
-            document.getElementById('totalCriterion').textContent = criterionData.length;
             document.getElementById('totalOscars').textContent = totalOscars;
         }
 
