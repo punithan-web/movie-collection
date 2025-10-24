@@ -613,6 +613,10 @@
                     <div class="stat-number" id="totalBluray">0</div>
                     <div class="stat-label">Blu-ray</div>
                 </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="totalDigital">0</div>
+                    <div class="stat-label">Digital Copies</div>
+                </div>
                 <div class="stat-card" style="background: rgba(255, 215, 0, 0.15); border: 1px solid rgba(255, 215, 0, 0.3);">
                     <div class="stat-number" style="color: #ffd700;" id="totalOscars">0</div>
                     <div class="stat-label">🏆 Oscar Best Picture Winners</div>
@@ -1896,6 +1900,9 @@
             // Count Blu-ray movies (includes Blu-ray column)
             const countBluray = moviesData.filter(m => m[3] && m[3].toLowerCase() === 'yes').length;
 
+            // Count Digital copies (based on Digital Platform field - index 5)
+            const countDigital = moviesData.filter(m => m[5] && m[5].trim() !== '').length;
+
             // Count 4K in Criterion (format column, index 2)
             const criterion4k = criterionData.filter(c => c[2] && c[2].toLowerCase() === '4k').length;
 
@@ -1920,6 +1927,7 @@
             document.getElementById('totalDocs').textContent = docsCount;
             document.getElementById('total4k').textContent = total4k;
             document.getElementById('totalBluray').textContent = totalBluray;
+            document.getElementById('totalDigital').textContent = countDigital;
             document.getElementById('totalOscars').textContent = totalOscars;
         }
 
