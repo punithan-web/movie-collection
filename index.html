@@ -525,12 +525,7 @@
         </div>
 
         <div id="movies" class="tab-content active">
-            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-                <input type="text" class="search-box" placeholder="Search movies..." onkeyup="searchTable('moviesTable', this.value)" style="flex: 1; min-width: 300px;">
-                <button onclick="openAddMovieModal('movies')" style="padding: 14px 28px; background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.95em; transition: all 0.2s; white-space: nowrap;">
-                    + Add Movie
-                </button>
-            </div>
+            <input type="text" class="search-box" placeholder="Search movies..." onkeyup="searchTable('moviesTable', this.value)">
             <div style="overflow-x: auto;">
                 <table id="moviesTable">
                     <thead>
@@ -551,12 +546,7 @@
             </div>
         </div>
         <div id="documentaries" class="tab-content">
-            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-                <input type="text" class="search-box" placeholder="Search documentaries..." onkeyup="searchTable('docsTable', this.value)" style="flex: 1; min-width: 300px;">
-                <button onclick="openAddMovieModal('docs')" style="padding: 14px 28px; background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.95em; transition: all 0.2s; white-space: nowrap;">
-                    + Add Documentary
-                </button>
-            </div>
+            <input type="text" class="search-box" placeholder="Search documentaries..." onkeyup="searchTable('docsTable', this.value)">
             <div style="overflow-x: auto;">
                 <table id="docsTable">
                     <thead>
@@ -577,12 +567,7 @@
         </div>
 
         <div id="criterion" class="tab-content">
-            <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
-                <input type="text" class="search-box" placeholder="Search Criterion collection..." onkeyup="searchTable('criterionTable', this.value)" style="flex: 1; min-width: 300px;">
-                <button onclick="openAddMovieModal('criterion')" style="padding: 14px 28px; background: linear-gradient(135deg, #0a84ff 0%, #0066cc 100%); color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; font-size: 0.95em; transition: all 0.2s; white-space: nowrap;">
-                    + Add to Criterion
-                </button>
-            </div>
+            <input type="text" class="search-box" placeholder="Search Criterion collection..." onkeyup="searchTable('criterionTable', this.value)">
             <div style="overflow-x: auto;">
                 <table id="criterionTable">
                     <thead>
