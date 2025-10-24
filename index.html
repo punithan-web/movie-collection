@@ -1519,16 +1519,157 @@
             });
             
             if (trueStandalone.length > 0) {
-                const headerRow = document.createElement('tr');
-                headerRow.className = 'boxed-set-header';
-                headerRow.style.backgroundColor = '#1d1d1f';
-                const headerCell = document.createElement('td');
-                headerCell.colSpan = columns.length;
-                headerCell.innerHTML = `<strong>🎬 Individual Movies</strong> <span style="opacity: 0.7;">(${trueStandalone.length} items)</span>`;
-                headerRow.appendChild(headerCell);
-                tbody.appendChild(headerRow);
+                // For Criterion collection, group by director
+                if (collectionName === 'criterion') {
+                    const directorGroups = {};
+                    const trulyStandalone = [];
 
-                trueStandalone.forEach(row => {
+                    trueStandalone.forEach(row => {
+                        const director = row[5]; // Director is at index 5 in Criterion data
+                        if (director && director.trim() !== '') {
+                            if (!directorGroups[director]) {
+                                directorGroups[director] = [];
+                            }
+                            directorGroups[director].push(row);
+                        } else {
+                            trulyStandalone.push(row);
+                        }
+                    });
+
+                    // Display director groups (only if director has 2+ movies)
+                    Object.keys(directorGroups).sort().forEach(director => {
+                        if (directorGroups[director].length >= 2) {
+                            const color = colors[colorIndex % colors.length];
+                            colorIndex++;
+
+                            const headerRow = document.createElement('tr');
+                            headerRow.className = 'boxed-set-header';
+                            headerRow.style.backgroundColor = color;
+                            const headerCell = document.createElement('td');
+                            headerCell.colSpan = columns.length;
+                            headerCell.innerHTML = `<strong>🎬 ${director}</strong> <span style="opacity: 0.7;">(${directorGroups[director].length} films)</span>`;
+                            headerRow.appendChild(headerCell);
+                            tbody.appendChild(headerRow);
+
+                            // Sort by year
+                            directorGroups[director].sort((a, b) => {
+                                const yearA = parseInt(a[4]) || 0;
+                                const yearB = parseInt(b[4]) || 0;
+                                return yearA - yearB;
+                            });
+
+                            directorGroups[director].forEach(row => {
+                                const tr = document.createElement('tr');
+                                tr.className = 'boxed-set-item';
+                                tr.style.backgroundColor = color;
+
+                                const movieName = row[0];
+                                const isWatched = isMovieWatched(movieName, collectionName);
+
+                                const oscarColumn = columns[columns.length - 1];
+                                const isOscarWinner = row[oscarColumn] && row[oscarColumn].match(/^\d{4}$/);
+                                if (isOscarWinner) {
+                                    tr.classList.add('oscar-winner');
+                                }
+
+                                if (isKnownAnimation(movieName)) {
+                                    tr.classList.add('animation-movie');
+                                } else {
+                                    const cachedGenre = getMovieGenre(movieName);
+                                    if (cachedGenre && cachedGenre.includes('Animation')) {
+                                        tr.classList.add('animation-movie');
+                                    }
+                                }
+
+                                if (isWatched) {
+                                    tr.classList.add('movie-watched');
+                                }
+
+                                let genreTdInserted = false;
+                                columns.forEach((idx, colIndex) => {
+                                    const td = document.createElement('td');
+                                    const isLastColumn = colIndex === columns.length - 1;
+                                    if (colIndex === 0) {
+                                        td.innerHTML = `<a href="#" class="movie-link" onclick="showMovieDetails('${row[idx].replace(/'/g, "\\'")}'); return false;">${row[idx]}</a>`;
+                                    } else {
+                                        td.innerHTML = formatBadge(row[idx] || '', isLastColumn);
+                                    }
+                                    tr.appendChild(td);
+
+                                    if (!genreTdInserted && idx === 2) {
+                                        const genreTd = document.createElement('td');
+                                        genreTd.style.fontSize = '0.85em';
+                                        genreTd.style.color = '#666';
+                                        const cachedGenre = getMovieGenre(movieName);
+                                        if (cachedGenre) {
+                                            genreTd.textContent = cachedGenre;
+                                        } else {
+                                            genreTd.textContent = '...';
+                                            fetchAndCacheGenre(movieName).then(genre => {
+                                                if (genre) {
+                                                    genreTd.textContent = genre;
+                                                    if (genre.includes('Animation')) {
+                                                        tr.classList.add('animation-movie');
+                                                    }
+                                                } else {
+                                                    genreTd.textContent = '-';
+                                                }
+                                            });
+                                        }
+                                        tr.appendChild(genreTd);
+                                        genreTdInserted = true;
+                                    }
+                                });
+
+                                const watchedTd = document.createElement('td');
+                                watchedTd.className = 'watched-column';
+                                const checkbox = document.createElement('input');
+                                checkbox.type = 'checkbox';
+                                checkbox.className = 'watched-checkbox';
+                                checkbox.checked = isWatched;
+                                checkbox.onchange = function() {
+                                    setWatchedStatus(movieName, collectionName, this.checked);
+                                    if (this.checked) {
+                                        tr.classList.add('movie-watched');
+                                    } else {
+                                        tr.classList.remove('movie-watched');
+                                    }
+                                };
+                                watchedTd.appendChild(checkbox);
+                                tr.appendChild(watchedTd);
+
+                                tbody.appendChild(tr);
+                            });
+
+                            const spacerRow = document.createElement('tr');
+                            spacerRow.className = 'boxed-set-spacer';
+                            const spacerCell = document.createElement('td');
+                            spacerCell.colSpan = columns.length;
+                            spacerCell.style.height = '10px';
+                            spacerRow.appendChild(spacerCell);
+                            tbody.appendChild(spacerRow);
+                        } else {
+                            trulyStandalone.push(...directorGroups[director]);
+                        }
+                    });
+
+                    // Update trueStandalone to only include movies not grouped by director
+                    trueStandalone.length = 0;
+                    trueStandalone.push(...trulyStandalone);
+                }
+
+                // Display remaining standalone movies
+                if (trueStandalone.length > 0) {
+                    const headerRow = document.createElement('tr');
+                    headerRow.className = 'boxed-set-header';
+                    headerRow.style.backgroundColor = '#1d1d1f';
+                    const headerCell = document.createElement('td');
+                    headerCell.colSpan = columns.length;
+                    headerCell.innerHTML = `<strong>🎬 Individual Movies</strong> <span style="opacity: 0.7;">(${trueStandalone.length} items)</span>`;
+                    headerRow.appendChild(headerCell);
+                    tbody.appendChild(headerRow);
+
+                    trueStandalone.forEach(row => {
                     const tr = document.createElement('tr');
 
                     const movieName = row[0];
@@ -1631,6 +1772,7 @@
 
                     tbody.appendChild(tr);
                 });
+                }
             }
         }
 
