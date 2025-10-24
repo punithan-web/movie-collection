@@ -1436,6 +1436,10 @@
                                 fetchAndCacheGenre(movieName).then(genre => {
                                     if (genre) {
                                         genreTd.textContent = genre;
+                                        // Check if it's animation and add class dynamically
+                                        if (genre.includes('Animation')) {
+                                            tr.classList.add('animation-movie');
+                                        }
                                     } else {
                                         genreTd.textContent = '-';
                                     }
@@ -1551,6 +1555,10 @@
                                 fetchAndCacheGenre(movieName).then(genre => {
                                     if (genre) {
                                         genreTd.textContent = genre;
+                                        // Check if it's animation and add class dynamically
+                                        if (genre.includes('Animation')) {
+                                            tr.classList.add('animation-movie');
+                                        }
                                     } else {
                                         genreTd.textContent = '-';
                                     }
