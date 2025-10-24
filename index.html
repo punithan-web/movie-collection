@@ -534,8 +534,7 @@
                             <th>Boxed Set</th>
                             <th>Format</th>
                             <th>Genre</th>
-                            <th>Digital</th>
-                            <th>Platform</th>
+                            <th>Digital Platform</th>
                             <th>Release Year</th>
                             <th>Oscar Best Picture</th>
                             <th>Watched</th>
@@ -556,9 +555,8 @@
                             <th>Format</th>
                             <th>Genre</th>
                             <th>Includes Blu-ray</th>
-                            <th>Digital</th>
-                            <th>Platform</th>
-                            <th class="watched-column">Watched</th>
+                            <th>Digital Platform</th>
+                            <th>Watched</th>
                         </tr>
                     </thead>
                     <tbody id="docsBody"></tbody>
@@ -614,10 +612,6 @@
                 <div class="stat-card">
                     <div class="stat-number" id="totalBluray">0</div>
                     <div class="stat-label">Blu-ray</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="totalDigital">0</div>
-                    <div class="stat-label">Digital Copies</div>
                 </div>
                 <div class="stat-card" style="background: rgba(255, 215, 0, 0.15); border: 1px solid rgba(255, 215, 0, 0.3);">
                     <div class="stat-number" style="color: #ffd700;" id="totalOscars">0</div>
@@ -1902,9 +1896,6 @@
             // Count Blu-ray movies (includes Blu-ray column)
             const countBluray = moviesData.filter(m => m[3] && m[3].toLowerCase() === 'yes').length;
 
-            // Count Digital copies
-            const countDigital = moviesData.filter(m => m[4] && m[4].toLowerCase() === 'yes').length;
-
             // Count 4K in Criterion (format column, index 2)
             const criterion4k = criterionData.filter(c => c[2] && c[2].toLowerCase() === '4k').length;
 
@@ -1929,7 +1920,6 @@
             document.getElementById('totalDocs').textContent = docsCount;
             document.getElementById('total4k').textContent = total4k;
             document.getElementById('totalBluray').textContent = totalBluray;
-            document.getElementById('totalDigital').textContent = countDigital;
             document.getElementById('totalOscars').textContent = totalOscars;
         }
 
@@ -2144,7 +2134,7 @@
                 customDocs.push(newEntry);
                 saveCustomDocs(customDocs);
 
-                populateTable(getAllDocs(), 'docsBody', [0, 1, 2, 3, 4, 5], 'docs');
+                populateTable(getAllDocs(), 'docsBody', [0, 1, 2, 3, 5], 'docs');
                 successMessage = `✅ "${movieName}" has been added to your documentaries!`;
 
             } else if (currentCollection === 'criterion') {
@@ -2187,7 +2177,7 @@
                 customMovies.push(newEntry);
                 saveCustomMovies(customMovies);
 
-                populateTable(getAllMovies(), 'moviesBody', [0, 1, 2, 4, 5, 6, 7], 'movies');
+                populateTable(getAllMovies(), 'moviesBody', [0, 1, 2, 5, 6, 7], 'movies');
                 successMessage = `✅ "${movieName}" has been added to your collection!`;
             }
 
@@ -2197,8 +2187,10 @@
         }
 
         // Initialize tables with all movies (including custom ones)
-        populateTable(getAllMovies(), 'moviesBody', [0, 1, 2, 4, 5, 6, 7], 'movies');
-        populateTable(getAllDocs(), 'docsBody', [0, 1, 2, 3, 4, 5], 'docs');
+        // Main Movies: skip index 4 (digital), show [0:name, 1:boxed, 2:format, 5:platform, 6:year, 7:oscar]
+        populateTable(getAllMovies(), 'moviesBody', [0, 1, 2, 5, 6, 7], 'movies');
+        // Docs: skip index 4 (digital), show [0:name, 1:boxed, 2:format, 3:blu-ray, 5:platform]
+        populateTable(getAllDocs(), 'docsBody', [0, 1, 2, 3, 5], 'docs');
         populateTable(getAllCriterion(), 'criterionBody', [0, 1, 2, 4, 5, 6, 7], 'criterion');
         calculateStats();
         updateWatchedStats();
